@@ -66,17 +66,18 @@ export default class Area extends React.Component {
               </div>
               <div className='col-sm-6 my-3'>
                 <h3 className='space-1'>Total Collections</h3>
-                {/* <h5>{exercises.length ? exercises.length : "Fetching exercises..."}</h5> */}
                 <h5>0</h5>
               </div>
               <div className='col-sm-6 my-3'>
                 <h3 className='space-1'>Total News</h3>
-                {/* <h5>{exercises.length ? exercises.length : "Fetching exercises..."}</h5> */}
                 <h5>0</h5>
               </div>
               <div className='col-sm-6 my-3'>
                 <h3 className='space-1'>Total Events</h3>
-                {/* <h5>{exercises.length ? exercises.length : "Fetching exercises..."}</h5> */}
+                <h5>0</h5>
+              </div>
+              <div className='col-sm-6 my-3'>
+                <h3 className='space-1'>Total Products</h3>
                 <h5>0</h5>
               </div>
             </div>

@@ -16,10 +16,9 @@ export default class UserForm extends React.Component {
       loading: false,
       user: {
         name: '',
-        // last_name: '',
-        // city_id: '',
+        userName: '',
         email: '',
-        // phone: '',
+        phone: '',
         password: '',
         // address: '',
         // user_type: '',
@@ -223,7 +222,7 @@ export default class UserForm extends React.Component {
                     <div className="form-group row">
                       <label
                         className="control-label col-md-3 col-sm-3"
-                      >First Name
+                      >Name
                       </label>
                       <div className="col-md-6 col-sm-6">
                         <input
@@ -249,6 +248,40 @@ export default class UserForm extends React.Component {
                           name="email"
                           className="form-control"
                           value={user.email}
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Phone Number
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          required
+                          type="number"
+                          name="phone"
+                          className="form-control"
+                          value={user.phone}
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Username
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          required
+                          type="text"
+                          name="userName"
+                          className="form-control"
+                          value={user.userName}
                           onChange={this.handleInputChange}
                         />
                       </div>

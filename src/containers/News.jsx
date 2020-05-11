@@ -100,7 +100,7 @@ export default class News extends React.Component {
               <h3>List of News</h3>
             </div>
             <div  className="col-sm-4">
-              <div className='input-group'>
+              {/* <div className='input-group'>
                 <input
                   className='form-control'
                   type="text"
@@ -121,7 +121,7 @@ export default class News extends React.Component {
                 <span className="input-group-btn" >
                   <button type="button" onClick={() => this.handleSearch()} className="btn btn-info search-btn">Search</button>
                 </span>
-              </div>
+              </div> */}
             </div>
 
           <div className="col-sm-4 pull-right mobile-space">
@@ -137,8 +137,9 @@ export default class News extends React.Component {
                 <tr>
                   <th>Sr. #</th>
                   <th>Name</th>
-                  <th>Program</th>
-                  <th>Day</th>
+                  <th>Image</th>
+                  <th>Source</th>
+                  <th>Article</th>
                 </tr>
               </thead>
               <tbody>
@@ -147,8 +148,9 @@ export default class News extends React.Component {
                   <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{news.name}</td>
-                  <td>{news.program_name}</td>
-                  <td>{news.day_name}</td>
+                  <td>{news.image}</td>
+                  <td>{news.source}</td>
+                  <td>{news.article}</td>
                   <td>
                     <Link to={`/news/edit-news/${news.id}`}>
                       <span className="fa fa-edit" aria-hidden="true"></span>

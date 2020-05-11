@@ -4,7 +4,7 @@
   flex-direction: column;
   padding: $sidebar-padding;
   color: $sidebar-color;
-  background: $sidebar-bg;
+  background: $sneaker;
   @include borders($sidebar-borders);
 
   .sidebar-close {
@@ -129,7 +129,8 @@
       width: 20px;
       margin: 0 ($sidebar-nav-link-padding-x / 2) 0 0;
       font-size: 14px;
-      color: $sidebar-nav-link-icon-color;
+      // color: $sidebar-nav-link-icon-color;
+      color: white;
       text-align: center;
     }
 
@@ -150,7 +151,7 @@
 
     &:hover {
       color: $sidebar-nav-link-hover-color;
-      background: $sidebar-nav-link-hover-bg;
+      background: $red;
       @include borders($sidebar-nav-link-hover-borders);
 
       i {

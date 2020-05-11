@@ -110,7 +110,7 @@ export default class Users extends React.Component {
               <h3>List of Users</h3>
             </div>
             <div className="col-sm-4">
-              <div className='input-group'>
+              {/* <div className='input-group'>
                 <input
                   onChange={(event) => this.setState({q: event.target.value}, () => {
                     if(this.state.q === "") {
@@ -130,7 +130,7 @@ export default class Users extends React.Component {
                   <button type="button" onClick={() => this.handleSearch()}
                           className="btn btn-info search-btn">Search</button>
                 </span>
-              </div>
+              </div> */}
             </div>
             <div className="col-sm-4 pull-right mobile-space">
                 <Link to='/users/user-form'>
@@ -145,7 +145,9 @@ export default class Users extends React.Component {
                   <th>Sr. #</th>
                   {/* <th>Picture</th> */}
                   <th>Name</th>
+                  <th>Username</th>
                   <th>Email</th>
+                  <th>Phone</th>
                 </tr>
               </thead>
               <tbody>
@@ -155,7 +157,9 @@ export default class Users extends React.Component {
                   <td>{index + 1}</td>
                   {/* <td>{<img style={{height: '50px', width: '50px'}} src={user.profile_picture && user.profile_picture.url} />}</td> */}
                   <td>{user.name}</td>
+                  <td>{user.userName}</td>
                   <td>{user.email}</td>
+                  <td>{user.phone}</td>
                       {/* <td>
                         <Link to={`/users/edit-user/${user._id}`}>
                           <span className="fa fa-edit" aria-hidden="true"></span>

@@ -64,16 +64,16 @@ class Header extends Component {
         </NavbarToggler>
         <NavbarBrand href="/" className="p-0">
           <div style={style.logoWrapper} className={`svg-logo`}>
-            <img className={/*`img-fluid`*/ `companyLogo`} src={`${require('sneakerlog.jpeg')}`} />
+            <img className={`img-fluid companyLogo`} src={`${require('sneaker.png')}`} />
           </div>
-          <div className={`png-logo`}>
-            <img className={`img-fluid companyLogo`} src={`${require('sneakerlog.jpeg')}`} />
+          <div style={{backgroundColor: "#382636"}} className={`png-logo`}>
+            <img className={`img-fluid companyLogo`} src={`${require('sneaker.png')}`} />
           </div>
         </NavbarBrand>
         <NavbarToggler className="d-md-down-none mr-auto" onClick={this.sidebarToggle}>
           <span className="navbar-toggler-icon"></span>
         </NavbarToggler>
-        <h3 className="mr-auto d-md-down-none admin-heading">SneakerLog Dashboard</h3>
+        <h3 className="mr-auto d-md-down-none admin-heading">Sneaker Log Dashboard</h3>
         {this.props.currentUserImage ?
           <div className="user-image">
             <Link to={{ pathname: `/users/edit-user/${this.props.currentUserId}` }} id="user_img_tooltip">

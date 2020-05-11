@@ -5,6 +5,7 @@ import RichTextEditor from 'react-rte';
 import { Button } from 'reactstrap';
 import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
+import {toolbarConfig} from "../static/_textEditor";
 
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
@@ -16,22 +17,9 @@ export default class NewsForm extends React.Component {
       loading: false,
       news: {
         name: '',
-        total_days: 0,
-        sets: 0,
-        reps: 0,
-        intensity: 0,
-        timer_type: '',
-        duration: 0,
-        rest_duration: 0,
-        position: 0,
-        video_files: [],
-        workout_day_id: this.props.match.params.dayId ? this.props.match.params.dayId : "",
+        source: '',
+        image: '',
       },
-      workoutDays: [],
-      workoutDay: '',
-      newsId: '',
-      profile_picture: '',
-      videoInputCount: 1,
       description: RichTextEditor.createEmptyValue(),
     };
     
@@ -129,6 +117,12 @@ export default class NewsForm extends React.Component {
     news[name][index] = event.target.files[0];
     this.setState({ news });
   }
+  handleImages = (event) => {
+    const { name } = event.target;
+    const { news } = this.state;
+    news[name] = event.target.files[0];
+    this.setState({ news });
+  }
 
   postNews(event) {
     event.preventDefault();
@@ -199,14 +193,9 @@ export default class NewsForm extends React.Component {
   render() {
     console.log(this.state);
     const {
-      loading,
       news,
       description,
-      workoutDay,
-      workoutDays,
-      videoInputCount
     } = this.state;
-    const workoutDaySelected = this.props.match.params.dayId ? true : false
     return (
       <div className="row animated fadeIn">
         <div className="col-12">
@@ -239,6 +228,54 @@ export default class NewsForm extends React.Component {
                           className="form-control"
                           value={news.name}
                           onChange={this.handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Source
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          required
+                          type="text"
+                          name="source"
+                          className="form-control"
+                          value={news.source}
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Image
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          name="image"
+                          className="form-control"
+                          onChange={this.handleImages}
+                          // multiple
+                          // required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label className="control-label col-md-3 col-sm-3">Article</label>
+                      <div className="col-md-6 col-sm-6">
+                        <RichTextEditor
+                          value={description}
+                          toolbarConfig={toolbarConfig}
+                          onChange={(e) => {
+                            this.setDescription(e);
+                          }}
                         />
                       </div>
                     </div>

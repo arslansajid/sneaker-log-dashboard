@@ -1,11 +1,11 @@
 // Here you can add other styles
 
 .login .companyLogo {
-  width: 100px;
+  width: 160px;
   height: 100px;
   object-fit: contain;
   overflow: hidden;
-  background-color: #fff;
+  // background-color: #fff;
   border-radius: 50%;
 }
 
@@ -19,7 +19,7 @@
 }
 
 a {
-  color: $roomy-blue
+  color: $red
 }
 
 .sidebar {
@@ -27,6 +27,7 @@ a {
     &.active {
       i {
         //color: $sidebar-nav-link-active-icon-color-graana;
+        color: white;
       }
     }
   }
@@ -61,8 +62,9 @@ a {
 }
 
 .admin-heading {
-  color: #29363d;
+  color: white;
   margin-top: 12px;
+  font-weight: 600;
 }
 
 .table-responsive {

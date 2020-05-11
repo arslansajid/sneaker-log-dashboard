@@ -259,7 +259,7 @@ export default class BrandForm extends React.Component {
                       </div>
                     </div> */}
 
-                    <div className="form-group row">
+                    {/* <div className="form-group row">
                       <label className="control-label col-md-3 col-sm-3">Timer Type</label>
                       <div className="col-md-6 col-sm-6">
                         <select
@@ -274,7 +274,7 @@ export default class BrandForm extends React.Component {
                           <option value="rest">Rest</option>
                         </select>
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="ln_solid" />
                     <div className="form-group row">

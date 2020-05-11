@@ -5,10 +5,12 @@ import RichTextEditor from 'react-rte';
 import { Button } from 'reactstrap';
 import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
+import { toolbarConfig } from "../static/_textEditor";
 
-import Select from 'react-select';
-import 'react-select/dist/react-select.css';
+import { SingleDatePicker } from 'react-dates';
+import TimeRangePicker from '@wojtekmaj/react-timerange-picker';
 
+const today = new Date();
 export default class EventForm extends React.Component {
   constructor(props) {
     super(props);
@@ -16,25 +18,16 @@ export default class EventForm extends React.Component {
       loading: false,
       appEvent: {
         name: '',
-        total_days: 0,
-        sets: 0,
-        reps: 0,
-        intensity: 0,
-        timer_type: '',
-        duration: 0,
-        rest_duration: 0,
-        position: 0,
-        video_files: [],
-        workout_day_id: this.props.match.params.dayId ? this.props.match.params.dayId : "",
+        start_date: null,
+        end_date: null,
       },
-      workoutDays: [],
-      workoutDay: '',
-      appEventId: '',
-      profile_picture: '',
-      videoInputCount: 1,
       description: RichTextEditor.createEmptyValue(),
+      startDate: null,
+      endDate: null,
+      focusedInput: null,
+      time: ['', ''],
     };
-    
+
     this.handleInputChange = this.handleInputChange.bind(this);
     this.postEvent = this.postEvent.bind(this);
   }
@@ -43,22 +36,22 @@ export default class EventForm extends React.Component {
     const { match } = this.props;
     if (match.params.appEventId) {
       axios.get(`${API_END_POINT}/api/v1/appEvent/${match.params.appEventId}`)
-      .then((response) => {
-        let data  = response.data.appEvent;
-        data["video_files"] = [];
-        this.setState({
-          appEvent: data,
-        }, () => {
-          const {appEvent} = this.state;
-          this.getWorkoutDayById(appEvent.workout_day_id);
-          if(appEvent.videos_url === null) {
-            appEvent.video_files = [];
-            this.setState({ appEvent })
-          } else {
-            this.setState({videoInputCount: appEvent.videos_url.length })
-          }
+        .then((response) => {
+          let data = response.data.appEvent;
+          data["video_files"] = [];
+          this.setState({
+            appEvent: data,
+          }, () => {
+            const { appEvent } = this.state;
+            this.getWorkoutDayById(appEvent.workout_day_id);
+            if (appEvent.videos_url === null) {
+              appEvent.video_files = [];
+              this.setState({ appEvent })
+            } else {
+              this.setState({ videoInputCount: appEvent.videos_url.length })
+            }
+          });
         });
-      });
     }
     if (match.params.dayId) {
       this.getWorkoutDayById(match.params.dayId)
@@ -69,21 +62,21 @@ export default class EventForm extends React.Component {
 
   getWorkoutDays = () => {
     axios.get(`${API_END_POINT}/api/v1/workout_days`)
-    .then(response => {
-      this.setState({
-        workoutDays: response.data.data,
-        responseMessage: 'No Workout Days Found...'
+      .then(response => {
+        this.setState({
+          workoutDays: response.data.data,
+          responseMessage: 'No Workout Days Found...'
+        })
       })
-    })
   }
 
   getWorkoutDayById = (workoutDayId) => {
     axios.get(`${API_END_POINT}/api/v1/workout_days/${workoutDayId}`)
-    .then((response) => {
-      this.setState({
-        workoutDay: response.data.data,
+      .then((response) => {
+        this.setState({
+          workoutDay: response.data.data,
+        });
       });
-    });
   }
 
   setWorkoutDay(selectedWorkoutDay) {
@@ -141,7 +134,7 @@ export default class EventForm extends React.Component {
       // for (let index = 0; index < appEvent.video_files.length; index += 1) {
       //   videosArray.push(appEvent.video_files[index]);
       // }
-      if(!!appEvent.video_files && appEvent.video_files.length > 0) {
+      if (!!appEvent.video_files && appEvent.video_files.length > 0) {
         appEvent.video_files.forEach((video, index) => {
           fd.append(`video_files[${index}]`, video);
         });
@@ -152,7 +145,7 @@ export default class EventForm extends React.Component {
         fd.append(`${eachState}`, appEvent[eachState]);
       })
 
-      
+
 
       this.setState({ loading: true });
       if (match.params.appEventId) {
@@ -199,12 +192,12 @@ export default class EventForm extends React.Component {
   render() {
     console.log(this.state);
     const {
-      loading,
       appEvent,
       description,
-      workoutDay,
-      workoutDays,
-      videoInputCount
+      startDate,
+      endDate,
+      focusedInput,
+      selectedDate
     } = this.state;
     const workoutDaySelected = this.props.match.params.dayId ? true : false
     return (
@@ -240,6 +233,52 @@ export default class EventForm extends React.Component {
                           value={appEvent.name}
                           onChange={this.handleInputChange}
                         />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label className="control-label col-md-3 col-sm-3">Description</label>
+                      <div className="col-md-6 col-sm-6">
+                        <RichTextEditor
+                          value={description}
+                          toolbarConfig={toolbarConfig}
+                          onChange={(e) => {
+                            this.setDescription(e);
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Time
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <TimeRangePicker
+                          onChange={(value) => this.setState({ time: value })}
+                          value={this.state.time}
+                          disableClock={true}
+                          maxDetail={"minute"}
+                          minutePlaceholder={"mm"}
+                          hourPlaceholder={"hh"}
+                          amPmAriaLabel={"Select AM/PM"}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label className="control-label col-md-3 col-sm-3">Date Range</label>
+                      <div className="col-md-6 col-sm-6">
+                        <SingleDatePicker
+                          date={this.state.startDate} // momentPropTypes.momentObj or null
+                          onDateChange={date => this.setState({ startDate: date })} // PropTypes.func.isRequired
+                          focused={this.state.focused} // PropTypes.bool
+                          onFocusChange={({ focused }) => this.setState({ focused })} // PropTypes.func.isRequired
+                          id="date-picker" // PropTypes.string.isRequired,
+                          minDate={today}
+                        />
+                        
                       </div>
                     </div>
 

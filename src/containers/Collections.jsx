@@ -100,7 +100,7 @@ export default class Collection extends React.Component {
               <h3>List of Collections</h3>
             </div>
             <div  className="col-sm-4">
-              <div className='input-group'>
+              {/* <div className='input-group'>
                 <input
                   className='form-control'
                   type="text"
@@ -121,7 +121,7 @@ export default class Collection extends React.Component {
                 <span className="input-group-btn" >
                   <button type="button" onClick={() => this.handleSearch()} className="btn btn-info search-btn">Search</button>
                 </span>
-              </div>
+              </div> */}
             </div>
 
           <div className="col-sm-4 pull-right mobile-space">

@@ -6,6 +6,8 @@ import { Button } from 'reactstrap';
 import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
 
+import ToggleButton from 'react-ios-switch';;
+
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 
@@ -16,16 +18,7 @@ export default class CollectionForm extends React.Component {
       loading: false,
       collection: {
         name: '',
-        total_days: 0,
-        sets: 0,
-        reps: 0,
-        intensity: 0,
-        timer_type: '',
-        duration: 0,
-        rest_duration: 0,
-        position: 0,
-        video_files: [],
-        workout_day_id: this.props.match.params.dayId ? this.props.match.params.dayId : "",
+        private: false
       },
       workoutDays: [],
       workoutDay: '',
@@ -260,19 +253,12 @@ export default class CollectionForm extends React.Component {
                     </div> */}
 
                     <div className="form-group row">
-                      <label className="control-label col-md-3 col-sm-3">Timer Type</label>
+                      <label className="control-label col-md-3 col-sm-3">Private</label>
                       <div className="col-md-6 col-sm-6">
-                        <select
-                          name="timer_type"
-                          value={collection.timer_type}
-                          className="form-control"
-                          onChange={this.handleInputChange}
-                          required
-                        >
-                          <option value="">Select Type</option>
-                          <option value="collection">Collection</option>
-                          <option value="rest">Rest</option>
-                        </select>
+                      <ToggleButton
+                        checked={collection.private}
+                        onChange={checked => {collection["private"]= checked; this.setState({collection}) }}
+                      />
                       </div>
                     </div>
 

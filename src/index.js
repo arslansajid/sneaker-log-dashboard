@@ -9,6 +9,7 @@ import configureStore from './store';
 
 //import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-dates/lib/css/_datepicker.css';
+import 'react-dates/initialize';
 //import 'font-awesome/css/font-awesome.css';
 
 // Styles

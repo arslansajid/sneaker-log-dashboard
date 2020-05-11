@@ -15,3 +15,17 @@
 
 // Custom styles
 @import "custom";
+
+.DateInput_1 {
+    width: 100% !important;
+}
+
+.react-timerange-picker__range-divider {
+    margin-right: 15px;
+}
+
+:focus,
+:active {
+  outline: none !important;
+  box-shadow: unset !important;
+}

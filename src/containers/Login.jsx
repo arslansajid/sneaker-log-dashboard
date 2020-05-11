@@ -116,7 +116,7 @@ class Login extends Component {
                       </InputGroup>
                       <Row>
                         <Col xs="6">
-                          <Button color="roomy-blue" className={`px-4 ${this.state.loading ? 'disabled' : ''}`}>
+                          <Button color="red" className={`px-4 ${this.state.loading ? 'disabled' : ''}`}>
                             <i className={`fa fa-spinner fa-pulse ${this.state.loading ? '' : 'd-none'}`}/> Login
                           </Button>
                         </Col>
@@ -130,10 +130,10 @@ class Login extends Component {
                 <Card className="text-white bg-roomy-blue py-5 d-md-down-none" style={{ width: 44 + '%' }}>
                   <CardBody className="text-center">
                     <div>
-                    {/* <div style={style.logoWrapper} className={`svg-logo`}>
-                      <img className={`companyLogo`} src={`${require('panzer.png')}`} />
-                    </div> */}
-                      <div className={`text-center`} style={{ fontSize: '20px', paddingTop: "10px", fontWeight: "bold" }}>SneakerLog Dashboard</div>
+                    <div style={style.logoWrapper} className={`svg-logo`}>
+                      <img className={`companyLogo`} src={`${require('sneaker.png')}`} />
+                    </div>
+                      <div className={`text-center`} style={{ fontSize: '20px', paddingTop: "10px", fontWeight: "bold" }}>Sneaker Log Dashboard</div>
                     </div>
                   </CardBody>
                 </Card>
