@@ -117,7 +117,7 @@
     .app-header.navbar {
       .navbar-brand {
         width: $navbar-brand-minimized-width;
-        background-color: $navbar-brand-minimized-bg;
+        background-color: $sneaker;
         //background-image: $navbar-brand-minimized-logo;
         background-size: $navbar-brand-minimized-logo-size;
         @include borders($navbar-brand-minimized-border);
