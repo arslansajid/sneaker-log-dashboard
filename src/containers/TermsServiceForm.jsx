@@ -207,34 +207,14 @@ export default class TermsServiceForm extends React.Component {
                     onSubmit={this.postTermsService}
                   >
 
-                    <div className="form-group row">
-                      <label
-                        className="control-label col-md-3 col-sm-3"
-                      >Name
-                      </label>
-                      <div className="col-md-6 col-sm-6">
-                        <input
-                          required
-                          type="text"
-                          name="name"
-                          className="form-control"
-                          value={termsService.name}
-                          onChange={this.handleInputChange}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="form-group row">
-                      <label className="control-label col-md-3 col-sm-3">Description</label>
-                      <div className="col-md-6 col-sm-6">
-                        <RichTextEditor
-                          value={description}
-                          toolbarConfig={toolbarConfig}
-                          onChange={(e) => {
-                            this.setDescription(e);
-                          }}
-                        />
-                      </div>
+                    <div className="col-md-12 col-sm-12">
+                      <RichTextEditor
+                        value={description}
+                        toolbarConfig={toolbarConfig}
+                        onChange={(e) => {
+                          this.setDescription(e);
+                        }}
+                      />
                     </div>
 
                     {/* <div className="form-group row">

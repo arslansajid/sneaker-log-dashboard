@@ -95,13 +95,13 @@ class App extends React.Component {
                   <Route exact={true} path="/events/event-form" component={EventForm}/>
                   <Route exact={true} path="/events/edit-event/:eventId" component={EventForm}/>
 
-                  <Route exact={true} path="/privacy-policy" component={PrivacyPolicy}/>
-                  <Route exact={true} path="/privacy-policy/privacy-policy-form" component={PrivacyPolicyForm}/>
-                  <Route exact={true} path="/privacy-policy/edit-privacy-policy/:privacyPolicyId" component={PrivacyPolicyForm}/>
+                  <Route exact={true} path="/privacy-policy" component={PrivacyPolicyForm}/>
+                  {/* <Route exact={true} path="/privacy-policy/privacy-policy-form" component={PrivacyPolicyForm}/> */}
+                  {/* <Route exact={true} path="/privacy-policy/edit-privacy-policy/:privacyPolicyId" component={PrivacyPolicyForm}/> */}
 
-                  <Route exact={true} path="/terms-service" component={TermsService}/>
-                  <Route exact={true} path="/terms-service/terms-service-form" component={TermsServiceForm}/>
-                  <Route exact={true} path="/terms-service/edit-terms-service/:eventId" component={TermsServiceForm}/>
+                  <Route exact={true} path="/terms-service" component={TermsServiceForm}/>
+                  {/* <Route exact={true} path="/terms-service/terms-service-form" component={TermsServiceForm}/> */}
+                  {/* <Route exact={true} path="/terms-service/edit-terms-service/:eventId" component={TermsServiceForm}/> */}
                   
                 </Switch>
               </Container>
