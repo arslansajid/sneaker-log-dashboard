@@ -237,9 +237,25 @@ export default class EventForm extends React.Component {
                     </div>
 
                     <div className="form-group row">
+                      <label className="control-label col-md-3 col-sm-3">Date</label>
+                      <div className="col-md-6 col-sm-6">
+                        <SingleDatePicker
+                          date={this.state.startDate} // momentPropTypes.momentObj or null
+                          onDateChange={date => this.setState({ startDate: date })} // PropTypes.func.isRequired
+                          focused={this.state.focused} // PropTypes.bool
+                          onFocusChange={({ focused }) => this.setState({ focused })} // PropTypes.func.isRequired
+                          id="date-picker" // PropTypes.string.isRequired,
+                          minDate={today}
+                          placeholder="Select date"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
                       <label className="control-label col-md-3 col-sm-3">Description</label>
                       <div className="col-md-6 col-sm-6">
                         <RichTextEditor
+                          className="text-editor"
                           value={description}
                           toolbarConfig={toolbarConfig}
                           onChange={(e) => {
@@ -264,21 +280,6 @@ export default class EventForm extends React.Component {
                           hourPlaceholder={"hh"}
                           amPmAriaLabel={"Select AM/PM"}
                         />
-                      </div>
-                    </div>
-
-                    <div className="form-group row">
-                      <label className="control-label col-md-3 col-sm-3">Date Range</label>
-                      <div className="col-md-6 col-sm-6">
-                        <SingleDatePicker
-                          date={this.state.startDate} // momentPropTypes.momentObj or null
-                          onDateChange={date => this.setState({ startDate: date })} // PropTypes.func.isRequired
-                          focused={this.state.focused} // PropTypes.bool
-                          onFocusChange={({ focused }) => this.setState({ focused })} // PropTypes.func.isRequired
-                          id="date-picker" // PropTypes.string.isRequired,
-                          minDate={today}
-                        />
-                        
                       </div>
                     </div>
 

@@ -24,6 +24,15 @@
     margin-right: 15px;
 }
 
+.SingleDatePicker_picker {
+  top: 50px !important;
+  z-index: 100;
+}
+
+.text-editor {
+  z-index: 10;
+}
+
 :focus,
 :active {
   outline: none !important;
