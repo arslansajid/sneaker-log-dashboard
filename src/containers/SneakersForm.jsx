@@ -9,7 +9,7 @@ import Cookie from 'js-cookie';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 
-import { SingleDatePicker } from 'react-dates';
+import { SingleDatePicker } from 'react-dates'; 
 
 const today = new Date();
 export default class SneakersForm extends React.Component {
