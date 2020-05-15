@@ -35,11 +35,11 @@ export default {
       url: '/events',
       icon: 'icon-fire',
     },
-    // {
-    //   name: 'Orders',
-    //   url: '/orders',
-    //   icon: 'icon-handbag',
-    // },
+    {
+      name: 'Sneakers',
+      url: '/sneakers',
+      icon: 'icon-handbag',
+    },
     // {
     //   name: 'Gallery',
     //   url: '/gallery',

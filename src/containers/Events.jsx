@@ -136,9 +136,12 @@ export default class Events extends React.Component {
               <thead>
                 <tr>
                   <th>Sr. #</th>
-                  <th>Name</th>
-                  <th>Program</th>
-                  <th>Day</th>
+                  <th>Title</th>
+                  <th>Image</th>
+                  <th>Location</th>
+                  <th>Date</th>
+                  <th>Timings</th>
+                  <th>About</th>
                 </tr>
               </thead>
               <tbody>
@@ -146,6 +149,9 @@ export default class Events extends React.Component {
                 this.state.events.map((event, index) => (
                   <tr key={index}>
                   <td>{index + 1}</td>
+                  <td>{event.name}</td>
+                  <td>{event.program_name}</td>
+                  <td>{event.day_name}</td>
                   <td>{event.name}</td>
                   <td>{event.program_name}</td>
                   <td>{event.day_name}</td>

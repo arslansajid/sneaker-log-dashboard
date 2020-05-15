@@ -25,6 +25,10 @@ const routes = {
   '/events/event-form': 'Event Form',
   '/events/edit-event': 'Edit Event',
 
+  '/sneakers': 'Sneakers',
+  '/sneakers/sneakers-form': 'Sneakers Form',
+  '/sneakers/edit-sneakers': 'Edit Sneakers',
+
   '/privacy-policy': 'Privacy Policy',
   '/privacy-policy/privacy-policy-form': 'Privacy Policy Form',
   '/privacy-policy/edit-privacy-policy': 'Edit Privacy Policy',

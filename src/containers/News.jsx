@@ -136,7 +136,7 @@ export default class News extends React.Component {
               <thead>
                 <tr>
                   <th>Sr. #</th>
-                  <th>Name</th>
+                  <th>Title</th>
                   <th>Image</th>
                   <th>Source</th>
                   <th>Article</th>

@@ -190,10 +190,11 @@ export default class BrandForm extends React.Component {
     }
   }
 
-  handleFile = (event) => {
-    this.setState({
-      profile_picture: event.target.files.length ? event.target.files[0] : '',
-    });
+  handleImages = (event) => {
+    const { name } = event.target;
+    const { brand } = this.state;
+    brand[name] = event.target.files[0];
+    this.setState({ brand });
   }
 
   render() {
@@ -239,6 +240,24 @@ export default class BrandForm extends React.Component {
                           className="form-control"
                           value={brand.name}
                           onChange={this.handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Image
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          name="image"
+                          className="form-control"
+                          onChange={this.handleImages}
+                          // multiple
+                          // required
                         />
                       </div>
                     </div>

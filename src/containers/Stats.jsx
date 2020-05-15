@@ -65,11 +65,11 @@ export default class Area extends React.Component {
                 <h5>0</h5>
               </div>
               <div className='col-sm-6 my-3'>
-                <h3 className='space-1'>Total Collections</h3>
+                <h3 className='space-1'>Total Brands</h3>
                 <h5>0</h5>
               </div>
               <div className='col-sm-6 my-3'>
-                <h3 className='space-1'>Total News</h3>
+                <h3 className='space-1'>Total News Articles</h3>
                 <h5>0</h5>
               </div>
               <div className='col-sm-6 my-3'>
@@ -78,6 +78,10 @@ export default class Area extends React.Component {
               </div>
               <div className='col-sm-6 my-3'>
                 <h3 className='space-1'>Total Products</h3>
+                <h5>0</h5>
+              </div>
+              <div className='col-sm-6 my-3'>
+                <h3 className='space-1'>Sneaker Releases</h3>
                 <h5>0</h5>
               </div>
             </div>

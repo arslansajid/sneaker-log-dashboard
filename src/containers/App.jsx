@@ -35,6 +35,9 @@ import PrivacyPolicyForm from './PrivacyPolicyForm';
 import TermsService from './TermsService';
 import TermsServiceForm from './TermsServiceForm';
 
+import Sneakers from './Sneakers';
+import SneakersForm from './SneakersForm';
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -94,6 +97,11 @@ class App extends React.Component {
                   <Route exact={true} path="/events" component={Events}/>
                   <Route exact={true} path="/events/event-form" component={EventForm}/>
                   <Route exact={true} path="/events/edit-event/:eventId" component={EventForm}/>
+
+                  <Route exact={true} path="/sneakers" component={Sneakers}/>
+                  <Route exact={true} path="/sneakers/sneakers-form" component={SneakersForm}/>
+                  <Route exact={true} path="/sneakers/edit-sneakers/:sneakersId" component={SneakersForm}/>
+                  
 
                   <Route exact={true} path="/privacy-policy" component={PrivacyPolicyForm}/>
                   {/* <Route exact={true} path="/privacy-policy/privacy-policy-form" component={PrivacyPolicyForm}/> */}

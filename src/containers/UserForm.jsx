@@ -139,20 +139,17 @@ export default class UserForm extends React.Component {
     }
   }
 
-  handleFile = (event) => {
-    this.setState({
-      profile_picture: event.target.files.length ? event.target.files[0] : '',
-    });
+  handleImages = (event) => {
+    const { name } = event.target;
+    const { user } = this.state;
+    user[name] = event.target.files[0];
+    this.setState({ user });
   }
 
   render() {
     console.log(this.state);
     const {
-      loading,
       user,
-      description,
-      city,
-      cities,
     } = this.state;
     const toolbarConfig = {
       // Optionally specify the groups to display (displayed in the order listed).
@@ -286,6 +283,90 @@ export default class UserForm extends React.Component {
                         />
                       </div>
                     </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Image
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          name="image"
+                          className="form-control"
+                          onChange={this.handleImages}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Total Sneaker Count
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          required
+                          type="text"
+                          name="sneakerCount"
+                          className="form-control"
+                          value={user.sneakerCount}
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                      <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Sneaker Size
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          required
+                          type="text"
+                          name="sneakerSize"
+                          className="form-control"
+                          value={user.sneakerSize}
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                      </div>
+
+                      <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Favourite Brands
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          required
+                          type="text"
+                          name="favBrands"
+                          className="form-control"
+                          value={user.favBrands}
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                      </div>
+
+                      <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Sneaker Scans
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          required
+                          type="text"
+                          name="sneakerScans"
+                          className="form-control"
+                          value={user.sneakerScans}
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                      </div>
 
                     <div className="form-group row">
                       <label

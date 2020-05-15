@@ -123,6 +123,13 @@ export default class EventForm extends React.Component {
     this.setState({ appEvent });
   }
 
+  handleImages = (event) => {
+    const { name } = event.target;
+    const { appEvent } = this.state;
+    appEvent[name] = event.target.files[0];
+    this.setState({ appEvent });
+  }
+
   postEvent(event) {
     event.preventDefault();
     const { match, history } = this.props;
@@ -222,7 +229,7 @@ export default class EventForm extends React.Component {
                     <div className="form-group row">
                       <label
                         className="control-label col-md-3 col-sm-3"
-                      >Name
+                      >Title
                       </label>
                       <div className="col-md-6 col-sm-6">
                         <input
@@ -252,7 +259,42 @@ export default class EventForm extends React.Component {
                     </div>
 
                     <div className="form-group row">
-                      <label className="control-label col-md-3 col-sm-3">Description</label>
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Location
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          required
+                          type="text"
+                          name="name"
+                          className="form-control"
+                          value={appEvent.location}
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Image
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          name="image"
+                          className="form-control"
+                          onChange={this.handleImages}
+                          // multiple
+                          // required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label className="control-label col-md-3 col-sm-3">About</label>
                       <div className="col-md-6 col-sm-6">
                         <RichTextEditor
                           className="text-editor"
