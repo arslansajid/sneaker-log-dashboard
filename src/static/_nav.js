@@ -6,7 +6,7 @@ export default {
       icon: 'icon-chart',
     },
     {
-      name: 'Members',
+      name: 'Admins',
       url: '/members',
       icon: 'icon-people',
     },

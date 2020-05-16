@@ -7,7 +7,7 @@ import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
 const token = Cookie.get('sneakerlog_access_token');
 
-export default class Member extends React.Component {
+export default class Admin extends React.Component {
   constructor(props) {
     super(props);
 
@@ -17,7 +17,7 @@ export default class Member extends React.Component {
       pages: 1,
       q: '',
       loading: false,
-      responseMessage: 'Loading Members...'
+      responseMessage: 'Loading Admins...'
     }
   }
 
@@ -32,13 +32,13 @@ export default class Member extends React.Component {
       this.setState({
         members: response.data.data,
         loading: false,
-        responseMessage: 'No Members Found'
+        responseMessage: 'No Admins Found'
       })
     })
     .catch(() => {
       this.setState({
         loading: false,
-        responseMessage: 'No Members Found...'
+        responseMessage: 'No Admins Found...'
       })
     })
   }
@@ -68,7 +68,7 @@ export default class Member extends React.Component {
   handleSearch() {
     const { q } = this.state;
     if(q.length) {
-    this.setState({loading: true, members: [], responseMessage: 'Loading Member...'})
+    this.setState({loading: true, members: [], responseMessage: 'Loading Admin...'})
     // if(q === "") {
     //   this.fetchMember();
     // } else {
@@ -77,13 +77,13 @@ export default class Member extends React.Component {
         this.setState({
           members: response.data.searchedItems,
           loading: false,
-          responseMessage: 'No Members Found...'
+          responseMessage: 'No Admins Found...'
         })
       })
       .catch(() => {
         this.setState({
           loading: false,
-          responseMessage: 'No Members Found...'
+          responseMessage: 'No Admins Found...'
         })
       })
     }
@@ -97,7 +97,7 @@ export default class Member extends React.Component {
         <div className="col-12">
           <div className="row space-1">
             <div className="col-sm-4">
-              <h3>List of Members</h3>
+              <h3>List of Admins</h3>
             </div>
             <div  className="col-sm-4">
               {/* <div className='input-group'>
@@ -126,7 +126,7 @@ export default class Member extends React.Component {
 
           <div className="col-sm-4 pull-right mobile-space">
               <Link to="/members/member-form">
-                <button type="button" className="btn btn-success">Add New Member</button>
+                <button type="button" className="btn btn-success">Add New Admin</button>
               </Link>
           </div>
 
@@ -137,8 +137,7 @@ export default class Member extends React.Component {
                 <tr>
                   <th>Sr. #</th>
                   <th>Name</th>
-                  <th>Program</th>
-                  <th>Day</th>
+                  <th>Email</th>
                 </tr>
               </thead>
               <tbody>

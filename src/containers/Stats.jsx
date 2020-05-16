@@ -60,7 +60,7 @@ export default class Area extends React.Component {
           </div>
             <div className = 'row space-1'>
               <div className='col-sm-6 my-3'>
-                <h3 className='space-1'>Total Members</h3>
+                <h3 className='space-1'>Total Users</h3>
                 {/* <h5>{programs.length ? programs.length : "Fetching programs..."}</h5> */}
                 <h5>0</h5>
               </div>

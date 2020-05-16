@@ -215,7 +215,7 @@ export default class MemberForm extends React.Component {
             <div className="col-md-12 col-sm-12">
               <div className="x_panel">
                 <div className="x_title">
-                  <h2>Enter Member Details</h2>
+                  <h2>Enter Admin Details</h2>
                 </div>
                 <div className="x_content">
                   <br />
@@ -238,6 +238,57 @@ export default class MemberForm extends React.Component {
                           name="name"
                           className="form-control"
                           value={member.name}
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Email
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          required
+                          type="email"
+                          name="email"
+                          className="form-control"
+                          value={member.email}
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Password
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          required
+                          type="password"
+                          name="password"
+                          className="form-control"
+                          value={member.password}
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Confirm Password
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          required
+                          type="password"
+                          name="confirmPassword"
+                          className="form-control"
+                          value={member.confirmPassword}
                           onChange={this.handleInputChange}
                         />
                       </div>

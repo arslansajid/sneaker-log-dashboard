@@ -9,9 +9,9 @@ const routes = {
   '/collection/collection-form': 'Collection Form',
   '/collection/edit-collection': 'Edit Collection',
 
-  '/members': 'Members',
-  '/members/member-form': 'Member Form',
-  '/members/edit-member': 'Edit Member',
+  '/members': 'Admins',
+  '/members/member-form': 'Admin Form',
+  '/members/edit-member': 'Edit Admin',
 
   '/brands': 'Brands',
   '/brands/brand-form': 'Brand Form',
