@@ -229,7 +229,25 @@ export default class EventForm extends React.Component {
                     <div className="form-group row">
                       <label
                         className="control-label col-md-3 col-sm-3"
-                      >Title
+                      >Image
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          name="image"
+                          className="form-control"
+                          onChange={this.handleImages}
+                        // multiple
+                        // required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Name of Event
                       </label>
                       <div className="col-md-6 col-sm-6">
                         <input
@@ -261,6 +279,24 @@ export default class EventForm extends React.Component {
                     <div className="form-group row">
                       <label
                         className="control-label col-md-3 col-sm-3"
+                      >Time
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <TimeRangePicker
+                          onChange={(value) => this.setState({ time: value })}
+                          value={this.state.time}
+                          disableClock={true}
+                          maxDetail={"minute"}
+                          minutePlaceholder={"mm"}
+                          hourPlaceholder={"hh"}
+                          amPmAriaLabel={"Select AM/PM"}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
                       >Location
                       </label>
                       <div className="col-md-6 col-sm-6">
@@ -276,24 +312,6 @@ export default class EventForm extends React.Component {
                     </div>
 
                     <div className="form-group row">
-                      <label
-                        className="control-label col-md-3 col-sm-3"
-                      >Image
-                      </label>
-                      <div className="col-md-6 col-sm-6">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          name="image"
-                          className="form-control"
-                          onChange={this.handleImages}
-                          // multiple
-                          // required
-                        />
-                      </div>
-                    </div>
-
-                    <div className="form-group row">
                       <label className="control-label col-md-3 col-sm-3">About</label>
                       <div className="col-md-6 col-sm-6">
                         <RichTextEditor
@@ -303,24 +321,6 @@ export default class EventForm extends React.Component {
                           onChange={(e) => {
                             this.setDescription(e);
                           }}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="form-group row">
-                      <label
-                        className="control-label col-md-3 col-sm-3"
-                      >Time
-                      </label>
-                      <div className="col-md-6 col-sm-6">
-                        <TimeRangePicker
-                          onChange={(value) => this.setState({ time: value })}
-                          value={this.state.time}
-                          disableClock={true}
-                          maxDetail={"minute"}
-                          minutePlaceholder={"mm"}
-                          hourPlaceholder={"hh"}
-                          amPmAriaLabel={"Select AM/PM"}
                         />
                       </div>
                     </div>

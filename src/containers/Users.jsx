@@ -143,11 +143,16 @@ export default class Users extends React.Component {
               <thead>
                 <tr>
                   <th>Sr. #</th>
-                  {/* <th>Picture</th> */}
+                  <th>Picture</th>
                   <th>Name</th>
                   <th>Username</th>
-                  <th>Email</th>
+                  {/* <th>Email</th> */}
                   <th>Phone</th>
+                  <th>No. of Collections</th>
+                  <th>Sneaker Size</th>
+                  <th>Favourite Brands</th>
+                  <th>Total Sneakers Count</th>
+                  <th>Sneakers Scans</th>
                 </tr>
               </thead>
               <tbody>
@@ -155,10 +160,15 @@ export default class Users extends React.Component {
                 this.state.users.map((user, index) => (
                   <tr key={index}>
                   <td>{index + 1}</td>
-                  {/* <td>{<img style={{height: '50px', width: '50px'}} src={user.profile_picture && user.profile_picture.url} />}</td> */}
+                  <td>{<img style={{height: '50px', width: '50px'}} src={user.profile_picture} />}</td>
+                  <td>{user.name}</td>
+                  <td>{user.userName}</td>
+                  {/* <td>{user.email}</td> */}
+                  <td>{user.phone}</td>
                   <td>{user.name}</td>
                   <td>{user.userName}</td>
                   <td>{user.email}</td>
+                  <td>{user.phone}</td>
                   <td>{user.phone}</td>
                       {/* <td>
                         <Link to={`/users/edit-user/${user._id}`}>

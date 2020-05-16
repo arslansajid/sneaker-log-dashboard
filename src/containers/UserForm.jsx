@@ -29,7 +29,7 @@ export default class UserForm extends React.Component {
       profile_picture: '',
       description: RichTextEditor.createEmptyValue(),
     };
-    
+
     this.handleInputChange = this.handleInputChange.bind(this);
     this.postUser = this.postUser.bind(this);
   }
@@ -44,13 +44,13 @@ export default class UserForm extends React.Component {
   }
 
   componentDidMount() {
-    console.log('props',this.props);
+    console.log('props', this.props);
     const { match } = this.props;
     const requestParams = {
       "userId": match.params.userId,
     }
-      if (match.params.userId)
-      axios.get(`${API_END_POINT}/api/users/one`, {params: requestParams})
+    if (match.params.userId)
+      axios.get(`${API_END_POINT}/api/users/one`, { params: requestParams })
         .then((response) => {
           this.setState({
             user: response.data.object[0],
@@ -64,17 +64,17 @@ export default class UserForm extends React.Component {
             // });
           });
         });
-    }
+  }
 
-    setCity(selectedCity) {
-      this.setState(prevState => ({
-        city: selectedCity,
-        user: {
-          ...prevState.user,
-          city_id: selectedCity.ID,
-        },
-      }));
-    }
+  setCity(selectedCity) {
+    this.setState(prevState => ({
+      city: selectedCity,
+      user: {
+        ...prevState.user,
+        city_id: selectedCity.ID,
+      },
+    }));
+  }
 
   setDescription(description) {
     const { user } = this.state;
@@ -99,17 +99,17 @@ export default class UserForm extends React.Component {
     const { loading, user } = this.state;
     const token = Cookie.get('sneakerlog_access_token');
     if (!loading) {
-        this.setState({ loading: true });
-        if(match.params.userId) {
-          user.userId = user._id
-          delete user["_id"];
-          delete user["email"];
-          delete user["password"];
-          delete user["date"];
-          delete user["__v"];
-          this.setState({ user });
-          // axios.patch('/api/user/update', fd)
-          axios.post(`${API_END_POINT}/api/users/update`, user, {headers: {"auth-token": token}})
+      this.setState({ loading: true });
+      if (match.params.userId) {
+        user.userId = user._id
+        delete user["_id"];
+        delete user["email"];
+        delete user["password"];
+        delete user["date"];
+        delete user["__v"];
+        this.setState({ user });
+        // axios.patch('/api/user/update', fd)
+        axios.post(`${API_END_POINT}/api/users/update`, user, { headers: { "auth-token": token } })
           .then((response) => {
             if (response.data && response.status === 200) {
               window.alert(response.data.msg);
@@ -119,9 +119,9 @@ export default class UserForm extends React.Component {
               this.setState({ loading: false });
             }
           });
-        }
-        else {
-          axios.post(`${API_END_POINT}/api/users/register`, user)
+      }
+      else {
+        axios.post(`${API_END_POINT}/api/users/register`, user)
           .then((response) => {
             if (response.data && response.status === 200) {
               window.alert(response.data.msg);
@@ -135,7 +135,7 @@ export default class UserForm extends React.Component {
             window.alert('ERROR:')
             this.setState({ loading: false });
           })
-        }
+      }
     }
   }
 
@@ -216,6 +216,23 @@ export default class UserForm extends React.Component {
                     className="form-horizontal form-label-left"
                     onSubmit={this.postUser}
                   >
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Profile Image
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          name="image"
+                          className="form-control"
+                          onChange={this.handleImages}
+                        />
+                      </div>
+                    </div>
+
                     <div className="form-group row">
                       <label
                         className="control-label col-md-3 col-sm-3"
@@ -228,40 +245,6 @@ export default class UserForm extends React.Component {
                           name="name"
                           className="form-control"
                           value={user.name}
-                          onChange={this.handleInputChange}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="form-group row">
-                      <label
-                        className="control-label col-md-3 col-sm-3"
-                      >Email
-                      </label>
-                      <div className="col-md-6 col-sm-6">
-                        <input
-                          required
-                          type="text"
-                          name="email"
-                          className="form-control"
-                          value={user.email}
-                          onChange={this.handleInputChange}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="form-group row">
-                      <label
-                        className="control-label col-md-3 col-sm-3"
-                      >Phone Number
-                      </label>
-                      <div className="col-md-6 col-sm-6">
-                        <input
-                          required
-                          type="number"
-                          name="phone"
-                          className="form-control"
-                          value={user.phone}
                           onChange={this.handleInputChange}
                         />
                       </div>
@@ -287,18 +270,87 @@ export default class UserForm extends React.Component {
                     <div className="form-group row">
                       <label
                         className="control-label col-md-3 col-sm-3"
-                      >Image
+                      >Phone Number
                       </label>
                       <div className="col-md-6 col-sm-6">
                         <input
-                          type="file"
-                          accept="image/*"
-                          name="image"
+                          // required
+                          type="number"
+                          name="phone"
                           className="form-control"
-                          onChange={this.handleImages}
+                          value={user.phone}
+                          onChange={this.handleInputChange}
                         />
                       </div>
                     </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >No. of Collections
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          required
+                          type="text"
+                          name="userName"
+                          className="form-control"
+                          value={user.collections}
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Sneaker Size
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          required
+                          type="text"
+                          name="sneakerSize"
+                          className="form-control"
+                          value={user.sneakerSize}
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Favourite Brands
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          required
+                          type="text"
+                          name="favBrands"
+                          className="form-control"
+                          value={user.favBrands}
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                    </div>
+
+                    {/* <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3"
+                      >Email
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <input
+                          required
+                          type="text"
+                          name="email"
+                          className="form-control"
+                          value={user.email}
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                    </div> */}
 
                     <div className="form-group row">
                       <label
@@ -317,41 +369,7 @@ export default class UserForm extends React.Component {
                       </div>
                     </div>
 
-                      <div className="form-group row">
-                      <label
-                        className="control-label col-md-3 col-sm-3"
-                      >Sneaker Size
-                      </label>
-                      <div className="col-md-6 col-sm-6">
-                        <input
-                          required
-                          type="text"
-                          name="sneakerSize"
-                          className="form-control"
-                          value={user.sneakerSize}
-                          onChange={this.handleInputChange}
-                        />
-                      </div>
-                      </div>
-
-                      <div className="form-group row">
-                      <label
-                        className="control-label col-md-3 col-sm-3"
-                      >Favourite Brands
-                      </label>
-                      <div className="col-md-6 col-sm-6">
-                        <input
-                          required
-                          type="text"
-                          name="favBrands"
-                          className="form-control"
-                          value={user.favBrands}
-                          onChange={this.handleInputChange}
-                        />
-                      </div>
-                      </div>
-
-                      <div className="form-group row">
+                    <div className="form-group row">
                       <label
                         className="control-label col-md-3 col-sm-3"
                       >Sneaker Scans
@@ -366,9 +384,9 @@ export default class UserForm extends React.Component {
                           onChange={this.handleInputChange}
                         />
                       </div>
-                      </div>
+                    </div>
 
-                    <div className="form-group row">
+                    {/* <div className="form-group row">
                       <label
                         className="control-label col-md-3 col-sm-3"
                       >Password
@@ -383,7 +401,7 @@ export default class UserForm extends React.Component {
                           onChange={this.handleInputChange}
                         />
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* <div className="form-group row">
                       <label className="control-label col-md-3 col-sm-3">Profile Picture</label>
@@ -434,7 +452,7 @@ export default class UserForm extends React.Component {
                     <div className="form-group row">
                       <div className="col-md-6 col-sm-6 offset-md-3">
                         <Button className={`btn btn-success btn-lg ${this.state.loading ? 'disabled' : ''}`}>
-                          <i className={`fa fa-spinner fa-pulse ${this.state.loading ? '' : 'd-none'}`}/> Submit
+                          <i className={`fa fa-spinner fa-pulse ${this.state.loading ? '' : 'd-none'}`} /> Submit
                         </Button>
                       </div>
                     </div>

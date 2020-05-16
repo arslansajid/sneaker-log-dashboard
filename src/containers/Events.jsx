@@ -140,7 +140,7 @@ export default class Events extends React.Component {
                   <th>Image</th>
                   <th>Location</th>
                   <th>Date</th>
-                  <th>Timings</th>
+                  <th>Time</th>
                   <th>About</th>
                 </tr>
               </thead>
