@@ -7,7 +7,7 @@ export default {
     },
     {
       name: 'Admins',
-      url: '/members',
+      url: '/admin',
       icon: 'icon-people',
     },
     {

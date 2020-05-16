@@ -78,9 +78,9 @@ class App extends React.Component {
                   <Route exact={true} path='/users/user-form' component={UserForm}/>
                   <Route exact={true} path="/users/edit-user/:userId" component={UserForm}/>
 
-                  <Route exact={true} path="/members" component={Admins}/>
-                  <Route exact={true} path="/members/member-form" component={AdminForm}/>
-                  <Route exact={true} path="/members/edit-member/:memberId" component={AdminForm}/>
+                  <Route exact={true} path="/admin" component={Admins}/>
+                  <Route exact={true} path="/admin/admin-form" component={AdminForm}/>
+                  <Route exact={true} path="/admin/edit-admin/:adminId" component={AdminForm}/>
 
                   <Route exact={true} path="/brands" component={Brands}/>
                   <Route exact={true} path="/brands/brand-form" component={BrandForm}/>
