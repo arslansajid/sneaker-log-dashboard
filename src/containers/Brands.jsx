@@ -137,8 +137,7 @@ export default class Brand extends React.Component {
                 <tr>
                   <th>Sr. #</th>
                   <th>Name</th>
-                  <th>Program</th>
-                  <th>Day</th>
+                  <th>Image</th>
                 </tr>
               </thead>
               <tbody>
@@ -147,8 +146,7 @@ export default class Brand extends React.Component {
                   <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{brand.name}</td>
-                  <td>{brand.program_name}</td>
-                  <td>{brand.day_name}</td>
+                  <td>{brand.image}</td>
                   <td>
                     <Link to={`/brands/edit-brand/${brand.id}`}>
                       <span className="fa fa-edit" aria-hidden="true"></span>
