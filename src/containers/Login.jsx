@@ -91,6 +91,9 @@ class Login extends Component {
               <CardGroup>
                 <Card className="p-4">
                   <CardBody>
+                    <div className="loginLogo-container d-flex d-lg-none">
+                      <img className={`companyLogo`} src={`${require('sneaker.png')}`} />
+                    </div>
                     <h1>Login</h1>
                     <p className="text-muted">Sign In to your account</p>
                     <Formsy onValidSubmit={this.submit.bind(this)}>

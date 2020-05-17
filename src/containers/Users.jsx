@@ -143,16 +143,16 @@ export default class Users extends React.Component {
               <thead>
                 <tr>
                   <th>Sr. #</th>
-                  <th>Picture</th>
+                  <th>Image</th>
                   <th>Name</th>
                   <th>Username</th>
                   {/* <th>Email</th> */}
                   <th>Phone</th>
                   <th>No. of Collections</th>
-                  <th>Sneaker Size</th>
-                  <th>Favourite Brands</th>
-                  <th>Total Sneakers Count</th>
-                  <th>Sneakers Scans</th>
+                  <th>Size</th>
+                  <th>Favorite Brands</th>
+                  <th>Sneaker Count</th>
+                  <th>Sneaker Scans</th>
                 </tr>
               </thead>
               <tbody>

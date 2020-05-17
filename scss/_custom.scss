@@ -39,10 +39,11 @@ a {
       display: none;
     }
     .companyLogo {
-      width: 150px;
+      width: 145px;
       height: 55px;
       object-fit: contain;
       overflow: hidden;
+      margin-left: 10px;
     }
   }
 }
@@ -124,4 +125,19 @@ select.form-control:not([size]):not([multiple]) {
   .mobile-space {
     padding-top: 8px;
   }
+}
+
+@media (max-width: 576px) {
+  .loginLogo-container {
+    display: block;
+  }
+}
+
+
+.loginLogo-container {
+  background: #382636;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
 }
