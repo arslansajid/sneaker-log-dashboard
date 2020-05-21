@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import RichTextEditor from 'react-rte';
 import { Button } from 'reactstrap';
-import { API_END_POINT } from '../config';
-import Cookie from 'js-cookie';
+import { addUser, updateUser, getUserById } from "../backend/services/usersService";
 
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
@@ -15,18 +14,19 @@ export default class UserForm extends React.Component {
     this.state = {
       loading: false,
       user: {
+        uuid: '',
         name: '',
         userName: '',
-        email: '',
         phone: '',
-        password: '',
-        // address: '',
-        // user_type: '',
+        collections: '',
+        sneakerSize: '',
+        favoriteBrands: '',
+        sneakerCount: '',
+        sneakerScans: '',
+        profileImage: '',
+        timestampRegister: new Date(),
       },
-      cities: [],
-      city: '',
       userId: '',
-      profile_picture: '',
       description: RichTextEditor.createEmptyValue(),
     };
 
@@ -34,55 +34,18 @@ export default class UserForm extends React.Component {
     this.postUser = this.postUser.bind(this);
   }
 
-  componentWillMount() {
-    // axios.get(`${API_END_POINT}/api/fetch/city-fetch`)
-    //   .then(response => {
-    //     this.setState({
-    //       cities: response.data,
-    //     })
-    //   })
-  }
-
   componentDidMount() {
-    console.log('props', this.props);
     const { match } = this.props;
-    const requestParams = {
-      "userId": match.params.userId,
-    }
     if (match.params.userId)
-      axios.get(`${API_END_POINT}/api/users/one`, { params: requestParams })
+      getUserById(match.params.userId)
         .then((response) => {
           this.setState({
-            user: response.data.object[0],
-            description: RichTextEditor.createValueFromString(response.data.description, 'html'),
-          }, () => {
-            // axios.get(`${API_END_POINT}/api/fetchById/city-fetchById/${this.state.user.city_id}`)
-            // .then((response) => {
-            //   this.setState({
-            //     city: response.data[0],
-            //   });
-            // });
+            user: response,
           });
-        });
-  }
-
-  setCity(selectedCity) {
-    this.setState(prevState => ({
-      city: selectedCity,
-      user: {
-        ...prevState.user,
-        city_id: selectedCity.ID,
-      },
-    }));
-  }
-
-  setDescription(description) {
-    const { user } = this.state;
-    user.description = description.toString('html');
-    this.setState({
-      user,
-      description,
-    });
+        })
+        .catch((err) => {
+          window.alert('ERROR!')
+        })
   }
 
   handleInputChange(event) {
@@ -95,44 +58,30 @@ export default class UserForm extends React.Component {
 
   postUser(event) {
     event.preventDefault();
-    const { match, history } = this.props;
+    const { match } = this.props;
     const { loading, user } = this.state;
-    const token = Cookie.get('sneakerlog_access_token');
     if (!loading) {
       this.setState({ loading: true });
       if (match.params.userId) {
-        user.userId = user._id
-        delete user["_id"];
-        delete user["email"];
-        delete user["password"];
-        delete user["date"];
-        delete user["__v"];
-        this.setState({ user });
-        // axios.patch('/api/user/update', fd)
-        axios.post(`${API_END_POINT}/api/users/update`, user, { headers: { "auth-token": token } })
+        let cloneObject = Object.assign({}, user)
+        updateUser(match.params.userId, cloneObject)
           .then((response) => {
-            if (response.data && response.status === 200) {
-              window.alert(response.data.msg);
-              this.setState({ loading: false });
-            } else {
-              window.alert('ERROR:', response.data.error)
-              this.setState({ loading: false });
-            }
-          });
-      }
-      else {
-        axios.post(`${API_END_POINT}/api/users/register`, user)
-          .then((response) => {
-            if (response.data && response.status === 200) {
-              window.alert(response.data.msg);
-              this.setState({ loading: false });
-            } else {
-              window.alert('ERROR:', response.data.error)
-              this.setState({ loading: false });
-            }
+            window.alert("User updated successfully");
+            this.setState({ loading: false });
           })
           .catch((err) => {
-            window.alert('ERROR:')
+            window.alert('ERROR!')
+            this.setState({ loading: false });
+          })
+      }
+      else {
+        addUser(user)
+          .then((response) => {
+            window.alert("User saved successfully");
+            this.setState({ loading: false });
+          })
+          .catch((err) => {
+            window.alert('ERROR!')
             this.setState({ loading: false });
           })
       }
@@ -233,6 +182,23 @@ export default class UserForm extends React.Component {
                       </div>
                     </div>
 
+                    {user.profileImage
+                      ? (
+                        <div className="form-group row">
+                        <label className="control-label col-md-3 col-sm-3"></label>
+                        <div className="col-md-6 col-sm-6">
+                          <img
+                            style={{marginRight: '5px'}}
+                            width="100"
+                            className="img-fluid"
+                            src={`${user.profileImage}`}
+                            alt="profileImage"
+                          />
+                        </div>
+                      </div>
+                      ) : null
+                    }
+
                     <div className="form-group row">
                       <label
                         className="control-label col-md-3 col-sm-3"
@@ -293,7 +259,7 @@ export default class UserForm extends React.Component {
                         <input
                           required
                           type="text"
-                          name="userName"
+                          name="collections"
                           className="form-control"
                           value={user.collections}
                           onChange={this.handleInputChange}
@@ -327,30 +293,13 @@ export default class UserForm extends React.Component {
                         <input
                           required
                           type="text"
-                          name="favBrands"
+                          name="favoriteBrands"
                           className="form-control"
-                          value={user.favBrands}
+                          value={user.favoriteBrands}
                           onChange={this.handleInputChange}
                         />
                       </div>
                     </div>
-
-                    {/* <div className="form-group row">
-                      <label
-                        className="control-label col-md-3 col-sm-3"
-                      >Email
-                      </label>
-                      <div className="col-md-6 col-sm-6">
-                        <input
-                          required
-                          type="text"
-                          name="email"
-                          className="form-control"
-                          value={user.email}
-                          onChange={this.handleInputChange}
-                        />
-                      </div>
-                    </div> */}
 
                     <div className="form-group row">
                       <label
@@ -387,23 +336,6 @@ export default class UserForm extends React.Component {
                     </div>
 
                     {/* <div className="form-group row">
-                      <label
-                        className="control-label col-md-3 col-sm-3"
-                      >Password
-                      </label>
-                      <div className="col-md-6 col-sm-6">
-                        <input
-                          required
-                          type="password"
-                          name="password"
-                          className="form-control"
-                          value={user.password}
-                          onChange={this.handleInputChange}
-                        />
-                      </div>
-                    </div> */}
-
-                    {/* <div className="form-group row">
                       <label className="control-label col-md-3 col-sm-3">Profile Picture</label>
                       <div className="col-md-6 col-sm-6">
                         <input
@@ -416,38 +348,8 @@ export default class UserForm extends React.Component {
                           // required={coverForm.url ? 0 : 1}
                         />
                       </div>
-                    </div>
-
-                    {user.profile_picture
-                      ? (
-                        <div className="form-group row">
-                        <label className="control-label col-md-3 col-sm-3"></label>
-                        <div className="col-md-6 col-sm-6">
-                          <img
-                          style={{marginRight: '5px'}}
-                          width="100"
-                          className="img-fluid"
-                          src={`${user.profile_picture.url}`}
-                          alt="profile_picture"
-                        />
-                          
-                        </div>
-                      </div>
-                      ) : null
-                    } */}
-
-                    {/* <div className="form-group row">
-                      <label className="control-label col-md-3 col-sm-3">Description</label>
-                      <div className="col-md-6 col-sm-6">
-                        <RichTextEditor
-                          value={description}
-                          toolbarConfig={toolbarConfig}
-                          onChange={(e) => {
-                            this.setDescription(e);
-                          }}
-                        />
-                      </div>
                     </div> */}
+
                     <div className="ln_solid"></div>
                     <div className="form-group row">
                       <div className="col-md-6 col-sm-6 offset-md-3">

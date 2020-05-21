@@ -2,10 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import {Pagination} from 'react-bootstrap';
+import {getUsers, deleteUser} from "../backend/services/usersService";
+// import {signInWithEmail} from "../backend/services/authService";
 
 import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
 const token = Cookie.get('sneakerlog_access_token');
+
 
 export default class Users extends React.Component {
   constructor(props) {
@@ -21,20 +24,29 @@ export default class Users extends React.Component {
     }
   }
   componentWillMount() {
+    // signInWithEmail('arslan@gmail.com', "123456")
+    // .then((response) => {
+    //   console.log("response", response)
+    // })
+    // .catch((error) => {
+    //   console.log("error", error)
+    // })
     this.fetchUsers();
   }
 
   fetchUsers = () => {
-    axios.get(`${API_END_POINT}/api/users`)
+      getUsers()
       .then(response => {
+        console.log("############", response)
         this.setState({
-          users: response.data.objects,
-          pages: Math.ceil(response.data.length/10),
+          users: response,
+          // pages: Math.ceil(response.data.length/10),
           loading: false,
           responseMessage: 'No Users Found'
         })
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log("#######err#####", err)
         this.setState({
           loading: false,
           responseMessage: 'No Users Found...'
@@ -42,17 +54,14 @@ export default class Users extends React.Component {
       })
   }
 
-  deleteUser(userId, index) {
-    const requestParams = {
-      "userId": userId,
-    }
+  removeUser(userId, index) {
     if(confirm("Are you sure you want to delete this user?")) {
-      axios.delete(`${API_END_POINT}/api/users/delete`, {data: requestParams, headers: {"auth-token": token}})
+      deleteUser(userId)
         .then(response => {
           const users = this.state.users.slice();
           users.splice(index, 1);
           this.setState({ users });
-          window.alert(response.data.msg)
+          window.alert("User deleted successfully")
         });
     }
   }
@@ -146,7 +155,6 @@ export default class Users extends React.Component {
                   <th>Image</th>
                   <th>Name</th>
                   <th>Username</th>
-                  {/* <th>Email</th> */}
                   <th>Phone</th>
                   <th>No. of Collections</th>
                   <th>Size</th>
@@ -163,22 +171,21 @@ export default class Users extends React.Component {
                   <td>{<img style={{height: '50px', width: '50px'}} src={user.profile_picture} />}</td>
                   <td>{user.name}</td>
                   <td>{user.userName}</td>
-                  {/* <td>{user.email}</td> */}
                   <td>{user.phone}</td>
-                  <td>{user.name}</td>
-                  <td>{user.userName}</td>
-                  <td>{user.email}</td>
-                  <td>{user.phone}</td>
-                  <td>{user.phone}</td>
-                      {/* <td>
-                        <Link to={`/users/edit-user/${user._id}`}>
-                          <span className="fa fa-edit" aria-hidden="true"></span>
-                        </Link>
-                      </td> */}
-                      <td>
-                        <span className="fa fa-trash" style={{cursor: 'pointer'}} aria-hidden="true" onClick={() => this.deleteUser(user._id, index)}></span>
-                      </td>
-                    </tr>
+                  <td>{user.collections}</td>
+                  <td>{user.sneakerSize}</td>
+                  <td>{user.favoriteBrands}</td>
+                  <td>{user.sneakerCount}</td>
+                  <td>{user.sneakerScans}</td>
+                  <td>
+                    <Link to={`/users/edit-user/${user.uuid}`}>
+                      <span className="fa fa-edit" aria-hidden="true"></span>
+                    </Link>
+                  </td>
+                  <td>
+                    <span className="fa fa-trash" style={{cursor: 'pointer'}} aria-hidden="true" onClick={() => this.removeUser(user.uuid, index)}></span>
+                  </td>
+                </tr>
                 )) :
                 (
                   <tr>
