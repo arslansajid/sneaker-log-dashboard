@@ -19,6 +19,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { API_END_POINT } from '../config';
+import {signInWithEmail} from "../backend/services/authService"
 
 const style = {
   logoWrapper: {
@@ -38,7 +39,7 @@ class Login extends Component {
 
     this.state = {
       user: null,
-      username: '',
+      email: '',
       password: '',
       loading: false
     }
@@ -51,33 +52,29 @@ class Login extends Component {
     }
   }
 
-  submit() {
-    const {username, password} = this.state;
+  submit = async () => {
+    const {email, password} = this.state;
     if (!this.state.loading) {
       this.setState({ loading: true });
 
       // untill the backend gets ready
-      Cookie.set('sneakerlog_access_token', { expires: 14 })
-      this.props.history.push("/");
+      // Cookie.set('sneakerlog_access_token', { expires: 14 })
+      // this.props.history.push("/");
 
-      // axios.post(`${API_END_POINT}/api/v1/users/sign_in?email=${username}&password=${password}`)
+      const signInResult =  await signInWithEmail(email, password)
+
+      if(!!signInResult) {
+        Cookie.set('sneakerlog_access_token', { expires: 14 })
+        this.props.history.push("/");
+      } else {
+        this.setState({ loading: false });
+      }
       // .then(response => {
-      //   if (response && response.status == 200) {
-      //     const token = response.data.Authorization_Token;
-      //     console.log('Token', token)
-      //     axios.defaults.headers.common['Authorization'] = `${token}`;
-      //     if (process.env.NODE_ENV === 'production') {
       //       Cookie.set('sneakerlog_access_token', `${token}`, { expires: 14 })
-      //     }
-      //     else {
-      //       Cookie.set('sneakerlog_access_token', `${token}`, { expires: 14 })
-      //     }
-      //     this.props.history.push("/");
-      //   }
+      //       this.props.history.push("/");
       // })
       // .catch(error => {
       //   this.setState({ loading: false });
-      //   window.alert("ERROR !!!");
       // });
     }
   }
@@ -95,7 +92,7 @@ class Login extends Component {
                       <img className={`companyLogo`} src={`${require('sneaker.png')}`} />
                     </div>
                     <h1>Login</h1>
-                    <p className="text-muted">Sign In to your account</p>
+                    <p className="text-muted py-2">Sign In to your account</p>
                     <Formsy onValidSubmit={this.submit.bind(this)}>
                       <InputGroup className="mb-3">
                         <InputGroupAddon addonType="prepend">
@@ -103,9 +100,9 @@ class Login extends Component {
                             <i className="icon-user"></i>
                           </InputGroupText>
                         </InputGroupAddon>
-                        <Input type="email" placeholder="Username" required
-                               ref={(input) => (this.username = input)}
-                               onChange={(e) => this.setState({ username: e.target.value })}/>
+                        <Input type="email" placeholder="Email" required
+                               ref={(input) => (this.email = input)}
+                               onChange={(e) => this.setState({ email: e.target.value })}/>
                       </InputGroup>
                       <InputGroup className="mb-4">
                         <InputGroupAddon addonType="prepend">
