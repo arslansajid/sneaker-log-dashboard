@@ -5,6 +5,7 @@
   padding: $sidebar-padding;
   color: $sidebar-color;
   background: $sneaker;
+  background: #000;
   @include borders($sidebar-borders);
 
   .sidebar-close {
