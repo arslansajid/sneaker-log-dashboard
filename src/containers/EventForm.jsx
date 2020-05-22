@@ -1,16 +1,17 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import axios from 'axios';
 import RichTextEditor from 'react-rte';
 import { Button } from 'reactstrap';
-import { API_END_POINT } from '../config';
-import Cookie from 'js-cookie';
+import { addEvent, updateEvent, getEventById } from "../backend/services/eventService";
 import { toolbarConfig } from "../static/_textEditor";
+import {firebase} from "../backend/firebase";
+import {imageResizeFileUri} from "../static/_imageUtils";
+import { v4 as uuidv4 } from 'uuid';
 
 import { SingleDatePicker } from 'react-dates';
 import TimeRangePicker from '@wojtekmaj/react-timerange-picker';
+import moment from 'moment';
 
-const today = new Date();
 export default class EventForm extends React.Component {
   constructor(props) {
     super(props);
@@ -18,14 +19,18 @@ export default class EventForm extends React.Component {
       loading: false,
       appEvent: {
         name: '',
-        start_date: null,
-        end_date: null,
+        date: '',
+        time: '',
+        location: '',
+        about: '',
+        image: '',
       },
       description: RichTextEditor.createEmptyValue(),
       startDate: null,
       endDate: null,
       focusedInput: null,
       time: ['', ''],
+      image: "",
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -34,29 +39,16 @@ export default class EventForm extends React.Component {
 
   componentDidMount() {
     const { match } = this.props;
-    if (match.params.appEventId) {
-      axios.get(`${API_END_POINT}/api/v1/appEvent/${match.params.appEventId}`)
+    if (match.params.eventId) {
+      getEventById(match.params.eventId)
         .then((response) => {
-          let data = response.data.appEvent;
-          data["video_files"] = [];
           this.setState({
-            appEvent: data,
-          }, () => {
-            const { appEvent } = this.state;
-            this.getWorkoutDayById(appEvent.workout_day_id);
-            if (appEvent.videos_url === null) {
-              appEvent.video_files = [];
-              this.setState({ appEvent })
-            } else {
-              this.setState({ videoInputCount: appEvent.videos_url.length })
-            }
+            appEvent: response,
+            startDate: moment(new Date(response.date.seconds*1000)),
+            time: response.time,
+            description: RichTextEditor.createValueFromString(response.about, 'html'),
           });
         });
-    }
-    if (match.params.dayId) {
-      this.getWorkoutDayById(match.params.dayId)
-    } else {
-      this.getWorkoutDays();
     }
   }
 
@@ -70,38 +62,9 @@ export default class EventForm extends React.Component {
       })
   }
 
-  getWorkoutDayById = (workoutDayId) => {
-    axios.get(`${API_END_POINT}/api/v1/workout_days/${workoutDayId}`)
-      .then((response) => {
-        this.setState({
-          workoutDay: response.data.data,
-        });
-      });
-  }
-
-  setWorkoutDay(selectedWorkoutDay) {
-    this.setState(prevState => ({
-      workoutDay: selectedWorkoutDay,
-      appEvent: {
-        ...prevState.appEvent,
-        workout_day_id: !!selectedWorkoutDay ? selectedWorkoutDay.id : "",
-      },
-    }));
-  }
-
-  setCity(selectedCity) {
-    this.setState(prevState => ({
-      city: selectedCity,
-      appEvent: {
-        ...prevState.appEvent,
-        city_id: selectedCity.ID,
-      },
-    }));
-  }
-
   setDescription(description) {
     const { appEvent } = this.state;
-    appEvent.description = description.toString('html');
+    appEvent.about = description.toString('html');
     this.setState({
       appEvent,
       description,
@@ -130,59 +93,56 @@ export default class EventForm extends React.Component {
     this.setState({ appEvent });
   }
 
-  postEvent(event) {
+  postEvent = async (event) => {
     event.preventDefault();
     const { match, history } = this.props;
-    const { loading, appEvent } = this.state;
+    const { loading, appEvent, image } = this.state;
     if (!loading) {
-      const fd = new FormData();
+      this.setState({ loading: true });
 
-      // let videosArray = [];
-      // for (let index = 0; index < appEvent.video_files.length; index += 1) {
-      //   videosArray.push(appEvent.video_files[index]);
-      // }
-      if (!!appEvent.video_files && appEvent.video_files.length > 0) {
-        appEvent.video_files.forEach((video, index) => {
-          fd.append(`video_files[${index}]`, video);
-        });
-        delete appEvent["video_files"];
+      let imageFile = image;
+
+      let downloadUrl;
+      let imageUri;
+
+      if (imageFile) {
+          imageUri = (await imageResizeFileUri({ file: imageFile }));
+
+          const storageRef = firebase
+              .storage()
+              .ref()
+              .child('Events')
+              .child(`${uuidv4()}.jpeg`);
+
+          if (imageUri) {
+              await storageRef.putString(imageUri, 'data_url');
+              downloadUrl = await storageRef.getDownloadURL();
+          }
       }
 
-      Object.keys(appEvent).forEach((eachState) => {
-        fd.append(`${eachState}`, appEvent[eachState]);
-      })
+      appEvent.image = downloadUrl;
 
-
-
-      this.setState({ loading: true });
-      if (match.params.appEventId) {
-        axios.put(`${API_END_POINT}/api/v1/appEvent/${match.params.appEventId}`, fd)
+      if (match.params.eventId) {
+        let cloneObject = Object.assign({}, appEvent)
+        updateEvent(match.params.eventId, cloneObject)
           .then((response) => {
-            if (response.data && response.data.status && response.status === 200) {
               window.alert("Updated !");
               this.setState({ loading: false });
-            } else {
-              window.alert('ERROR UPDATING !')
-              this.setState({ loading: false });
-            }
           })
           .catch((err) => {
+            console.log(err)
             window.alert('ERROR UPDATING !')
             this.setState({ loading: false });
           })
       }
       else {
-        axios.post(`${API_END_POINT}/api/v1/appEvent`, fd)
+        addEvent(appEvent)
           .then((response) => {
-            if (response.data && response.data.status && response.status === 200) {
               window.alert("SUCCESS !");
               this.setState({ loading: false });
-            } else {
-              window.alert('ERROR SAVING !')
-              this.setState({ loading: false });
-            }
           })
           .catch((err) => {
+            console.log(err)
             window.alert('ERROR SAVING !')
             this.setState({ loading: false });
           })
@@ -190,11 +150,30 @@ export default class EventForm extends React.Component {
     }
   }
 
-  handleFile = (event) => {
+  handleImage = (event) => {
     this.setState({
-      profile_picture: event.target.files.length ? event.target.files[0] : '',
+      image: event.target.files[0]
     });
   }
+
+  handleDateChange = (date) => {
+    const {appEvent} = this.state;
+    appEvent["date"] = new Date(date);
+    this.setState({
+      startDate: date,
+      appEvent
+    })
+  }
+
+  handleTimeChange = (value) => {
+    const {appEvent} = this.state;
+    appEvent["time"] = value;
+    this.setState({
+      time: value,
+      appEvent
+    })
+  }
+
 
   render() {
     console.log(this.state);
@@ -237,7 +216,7 @@ export default class EventForm extends React.Component {
                           accept="image/*"
                           name="image"
                           className="form-control"
-                          onChange={this.handleImages}
+                          onChange={this.handleImage}
                         // multiple
                         // required
                         />
@@ -266,11 +245,11 @@ export default class EventForm extends React.Component {
                       <div className="col-md-6 col-sm-6">
                         <SingleDatePicker
                           date={this.state.startDate} // momentPropTypes.momentObj or null
-                          onDateChange={date => this.setState({ startDate: date })} // PropTypes.func.isRequired
+                          onDateChange={date => this.handleDateChange(date)} // PropTypes.func.isRequired
                           focused={this.state.focused} // PropTypes.bool
                           onFocusChange={({ focused }) => this.setState({ focused })} // PropTypes.func.isRequired
                           id="date-picker" // PropTypes.string.isRequired,
-                          minDate={today}
+                          displayFormat={"DD-MMM-YYYY"}
                           placeholder="Select date"
                         />
                       </div>
@@ -283,7 +262,7 @@ export default class EventForm extends React.Component {
                       </label>
                       <div className="col-md-6 col-sm-6">
                         <TimeRangePicker
-                          onChange={(value) => this.setState({ time: value })}
+                          onChange={(value) => this.handleTimeChange(value)}
                           value={this.state.time}
                           disableClock={true}
                           maxDetail={"minute"}
@@ -303,7 +282,7 @@ export default class EventForm extends React.Component {
                         <input
                           required
                           type="text"
-                          name="name"
+                          name="location"
                           className="form-control"
                           value={appEvent.location}
                           onChange={this.handleInputChange}

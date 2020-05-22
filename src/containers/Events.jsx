@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import {Pagination} from 'react-bootstrap';
+import {getEvents, deleteEvent} from "../backend/services/eventService";
+// import {Pagination} from 'react-bootstrap';
 
 import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
+import moment from 'moment';
 const token = Cookie.get('sneakerlog_access_token');
 
 export default class Events extends React.Component {
@@ -27,10 +29,10 @@ export default class Events extends React.Component {
 
   fetchEvent = () => {
     this.setState({ loading: true })
-    axios.get(`${API_END_POINT}/api/v1/event`)
+    getEvents()
     .then(response => {
       this.setState({
-        events: response.data.data,
+        events: response,
         loading: false,
         responseMessage: 'No Events Found'
       })
@@ -45,12 +47,12 @@ export default class Events extends React.Component {
   
   deleteEvent(eventId, index) {
     if(confirm("Are you sure you want to delete this event?")) {
-      axios.delete(`${API_END_POINT}/api/v1/event/${eventId}`)
+      deleteEvent(eventId)
         .then(response => {
           const events = this.state.events.slice();
           events.splice(index, 1);
           this.setState({ events });
-          window.alert(response.data.message);
+          window.alert("Event deleted successfully")
         });
     }
   }
@@ -150,18 +152,18 @@ export default class Events extends React.Component {
                   <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{event.name}</td>
-                  <td>{event.program_name}</td>
-                  <td>{event.day_name}</td>
-                  <td>{event.name}</td>
-                  <td>{event.program_name}</td>
-                  <td>{event.day_name}</td>
+                  <td>{<img style={{height: '50px', width: '50px'}} src={event.image} />}</td> 
+                  <td>{event.location}</td>
+                  <td>{moment(new Date(event.date.seconds*1000)).format("DD-MMM-YYYY")}</td>
+                  <td>{event.time.map((time, index) => ` ${time} ${index < 1 ? "-" : ""}`)}</td>
+                  <td dangerouslySetInnerHTML={{__html: event.about}}></td>
                   <td>
-                    <Link to={`/events/edit-event/${event.id}`}>
+                    <Link to={`/events/edit-event/${event.uuid}`}>
                       <span className="fa fa-edit" aria-hidden="true"></span>
                     </Link>
                   </td>
                   <td>
-                    <span className="fa fa-trash" style={{cursor: 'pointer'}} aria-hidden="true" onClick={() => this.deleteEvent(event.id, index)}></span>
+                    <span className="fa fa-trash" style={{cursor: 'pointer'}} aria-hidden="true" onClick={() => this.deleteEvent(event.uuid, index)}></span>
                   </td>
                 </tr>
                 )) :
