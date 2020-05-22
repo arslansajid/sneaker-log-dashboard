@@ -15,9 +15,9 @@ export const signUp = async (email, password) => {
 export async function signInWithEmail(email, password) {
   let success = true;
   await firebase.auth().signInWithEmailAndPassword(email, password)
-  .then(async (user) => {
-    alert('Sign in succcess')
-  })
+  // .then(async (user) => {
+  //   alert('Sign in succcess')
+  // })
   .catch(function (error) {
     success = false;
     alert(error.code + ': ' + error.message);
