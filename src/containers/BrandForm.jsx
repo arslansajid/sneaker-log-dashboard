@@ -81,30 +81,31 @@ export default class BrandForm extends React.Component {
               await storageRef.putString(imageUri, 'data_url');
               downloadUrl = await storageRef.getDownloadURL();
           }
+        brand.image = downloadUrl;
       }
-
-      brand.image = downloadUrl;
 
       if (match.params.brandId) {
         let cloneObject = Object.assign({}, brand)
         updateBrand(match.params.brandId, cloneObject)
           .then((response) => {
-              window.alert("Updated !");
+              console.log("response", response)
+              window.alert("Brand updated successfully.");
               this.setState({ loading: false });
           })
           .catch((err) => {
-            window.alert('ERROR UPDATING !')
+            console.log("error", err)
+            window.alert('Error updating brand.')
             this.setState({ loading: false });
           })
       }
       else {
         addBrand(brand)
           .then((response) => {
-              window.alert("SUCCESS !");
+              window.alert("Brand created successfully.");
               this.setState({ loading: false });
           })
           .catch((err) => {
-            window.alert('ERROR SAVING !')
+            window.alert('Error adding brand.')
             this.setState({ loading: false });
           })
       }

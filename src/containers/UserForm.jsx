@@ -85,9 +85,8 @@ export default class UserForm extends React.Component {
               await storageRef.putString(imageUri, 'data_url');
               downloadUrl = await storageRef.getDownloadURL();
           }
+          user.profileImage = downloadUrl;
       }
-
-      user.profileImage = downloadUrl;
 
       if (match.params.userId) {
         let cloneObject = Object.assign({}, user)

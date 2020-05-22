@@ -99,30 +99,29 @@ export default class SneakersForm extends React.Component {
               await storageRef.putString(imageUri, 'data_url');
               downloadUrl = await storageRef.getDownloadURL();
           }
+          sneakers.image = downloadUrl;
       }
-
-      sneakers.image = downloadUrl;
 
       if (match.params.sneakersId) {
         let cloneObject = Object.assign({}, sneakers)
         updateSneakersReleaseDate(match.params.sneakersId, cloneObject)
           .then((response) => {
-              window.alert("Updated !");
+              window.alert("Updated successfully.");
               this.setState({ loading: false });
           })
           .catch((err) => {
-            window.alert('ERROR UPDATING !')
+            window.alert('Error updating.')
             this.setState({ loading: false });
           })
       }
       else {
         addSneakersReleaseDate(sneakers)
           .then((response) => {
-              window.alert("SUCCESS !");
+              window.alert("Created suuccessfully !");
               this.setState({ loading: false });
           })
           .catch((err) => {
-            window.alert('ERROR SAVING !')
+            window.alert('Error creating !')
             this.setState({ loading: false });
           })
       }

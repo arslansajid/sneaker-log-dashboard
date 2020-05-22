@@ -118,32 +118,31 @@ export default class EventForm extends React.Component {
               await storageRef.putString(imageUri, 'data_url');
               downloadUrl = await storageRef.getDownloadURL();
           }
+          appEvent.image = downloadUrl;
       }
-
-      appEvent.image = downloadUrl;
 
       if (match.params.eventId) {
         let cloneObject = Object.assign({}, appEvent)
         updateEvent(match.params.eventId, cloneObject)
           .then((response) => {
-              window.alert("Updated !");
+              window.alert('Event updated successfully.')
               this.setState({ loading: false });
           })
           .catch((err) => {
             console.log(err)
-            window.alert('ERROR UPDATING !')
+            window.alert('Error updating event.')
             this.setState({ loading: false });
           })
       }
       else {
         addEvent(appEvent)
           .then((response) => {
-              window.alert("SUCCESS !");
+              window.alert('Event created successfully.')
               this.setState({ loading: false });
           })
           .catch((err) => {
             console.log(err)
-            window.alert('ERROR SAVING !')
+            window.alert('Error creating event.')
             this.setState({ loading: false });
           })
       }
