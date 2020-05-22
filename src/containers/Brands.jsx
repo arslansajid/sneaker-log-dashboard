@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import {Pagination} from 'react-bootstrap';
+import {getBrands, deleteBrand} from "../backend/services/brandService";
 
 import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
@@ -27,10 +28,10 @@ export default class Brand extends React.Component {
 
   fetchBrand = () => {
     this.setState({ loading: true })
-    axios.get(`${API_END_POINT}/api/v1/brand`)
+    getBrands()
     .then(response => {
       this.setState({
-        brands: response.data.data,
+        brands: response,
         loading: false,
         responseMessage: 'No Brands Found'
       })
@@ -45,12 +46,12 @@ export default class Brand extends React.Component {
   
   deleteBrand(brandId, index) {
     if(confirm("Are you sure you want to delete this brand?")) {
-      axios.delete(`${API_END_POINT}/api/v1/brand/${brandId}`)
+      deleteBrand(brandId)
         .then(response => {
           const brands = this.state.brands.slice();
           brands.splice(index, 1);
           this.setState({ brands });
-          window.alert(response.data.message);
+          window.alert("Brand deleted successfully");
         });
     }
   }
@@ -146,14 +147,14 @@ export default class Brand extends React.Component {
                   <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{brand.name}</td>
-                  <td>{brand.image}</td>
+                  <td>{<img style={{height: '50px', width: '50px'}} src={brand.image} />}</td>
                   <td>
-                    <Link to={`/brands/edit-brand/${brand.id}`}>
+                    <Link to={`/brands/edit-brand/${brand.uuid}`}>
                       <span className="fa fa-edit" aria-hidden="true"></span>
                     </Link>
                   </td>
                   <td>
-                    <span className="fa fa-trash" style={{cursor: 'pointer'}} aria-hidden="true" onClick={() => this.deleteBrand(brand.id, index)}></span>
+                    <span className="fa fa-trash" style={{cursor: 'pointer'}} aria-hidden="true" onClick={() => this.deleteBrand(brand.uuid, index)}></span>
                   </td>
                 </tr>
                 )) :

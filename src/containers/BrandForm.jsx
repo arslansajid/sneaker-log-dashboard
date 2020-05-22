@@ -4,10 +4,10 @@ import axios from 'axios';
 import RichTextEditor from 'react-rte';
 import { Button } from 'reactstrap';
 import { API_END_POINT } from '../config';
-import Cookie from 'js-cookie';
-
-import Select from 'react-select';
-import 'react-select/dist/react-select.css';
+import { addBrand, updateBrand, getBrandById } from "../backend/services/brandService";
+import {firebase} from "../backend/firebase";
+import {imageResizeFileUri} from "../static/_imageUtils";
+import { v4 as uuidv4 } from 'uuid';
 
 export default class BrandForm extends React.Component {
   constructor(props) {
@@ -16,19 +16,9 @@ export default class BrandForm extends React.Component {
       loading: false,
       brand: {
         name: '',
-        total_days: 0,
-        sets: 0,
-        reps: 0,
-        intensity: 0,
-        timer_type: '',
-        duration: 0,
-        rest_duration: 0,
-        position: 0,
-        video_files: [],
-        workout_day_id: this.props.match.params.dayId ? this.props.match.params.dayId : "",
+        image: ''
       },
-      workoutDays: [],
-      workoutDay: '',
+      image: "",
       brandId: '',
       profile_picture: '',
       videoInputCount: 1,
@@ -42,77 +32,13 @@ export default class BrandForm extends React.Component {
   componentDidMount() {
     const { match } = this.props;
     if (match.params.brandId) {
-      axios.get(`${API_END_POINT}/api/v1/brand/${match.params.brandId}`)
+      getBrandById(match.params.brandId)
       .then((response) => {
-        let data  = response.data.brand;
-        data["video_files"] = [];
         this.setState({
-          brand: data,
-        }, () => {
-          const {brand} = this.state;
-          this.getWorkoutDayById(brand.workout_day_id);
-          if(brand.videos_url === null) {
-            brand.video_files = [];
-            this.setState({ brand })
-          } else {
-            this.setState({videoInputCount: brand.videos_url.length })
-          }
+          brand: response,
         });
       });
     }
-    if (match.params.dayId) {
-      this.getWorkoutDayById(match.params.dayId)
-    } else {
-      this.getWorkoutDays();
-    }
-  }
-
-  getWorkoutDays = () => {
-    axios.get(`${API_END_POINT}/api/v1/workout_days`)
-    .then(response => {
-      this.setState({
-        workoutDays: response.data.data,
-        responseMessage: 'No Workout Days Found...'
-      })
-    })
-  }
-
-  getWorkoutDayById = (workoutDayId) => {
-    axios.get(`${API_END_POINT}/api/v1/workout_days/${workoutDayId}`)
-    .then((response) => {
-      this.setState({
-        workoutDay: response.data.data,
-      });
-    });
-  }
-
-  setWorkoutDay(selectedWorkoutDay) {
-    this.setState(prevState => ({
-      workoutDay: selectedWorkoutDay,
-      brand: {
-        ...prevState.brand,
-        workout_day_id: !!selectedWorkoutDay ? selectedWorkoutDay.id : "",
-      },
-    }));
-  }
-
-  setCity(selectedCity) {
-    this.setState(prevState => ({
-      city: selectedCity,
-      brand: {
-        ...prevState.brand,
-        city_id: selectedCity.ID,
-      },
-    }));
-  }
-
-  setDescription(description) {
-    const { brand } = this.state;
-    brand.description = description.toString('html');
-    this.setState({
-      brand,
-      description,
-    });
   }
 
   handleInputChange(event) {
@@ -130,41 +56,41 @@ export default class BrandForm extends React.Component {
     this.setState({ brand });
   }
 
-  postBrand(event) {
+  postBrand = async(event) => {
     event.preventDefault();
     const { match, history } = this.props;
-    const { loading, brand } = this.state;
+    const { loading, brand, image } = this.state;
     if (!loading) {
-      const fd = new FormData();
+      this.setState({ loading: true });
+      
+      let imageFile = image;
 
-      // let videosArray = [];
-      // for (let index = 0; index < brand.video_files.length; index += 1) {
-      //   videosArray.push(brand.video_files[index]);
-      // }
-      if(!!brand.video_files && brand.video_files.length > 0) {
-        brand.video_files.forEach((video, index) => {
-          fd.append(`video_files[${index}]`, video);
-        });
-        delete brand["video_files"];
+      let downloadUrl;
+      let imageUri;
+
+      if (imageFile) {
+          imageUri = (await imageResizeFileUri({ file: imageFile }));
+
+          const storageRef = firebase
+              .storage()
+              .ref()
+              .child('Brands')
+              .child(`${uuidv4()}.jpeg`);
+
+          if (imageUri) {
+              await storageRef.putString(imageUri, 'data_url');
+              downloadUrl = await storageRef.getDownloadURL();
+          }
       }
 
-      Object.keys(brand).forEach((eachState) => {
-        fd.append(`${eachState}`, brand[eachState]);
-      })
+      brand.image = downloadUrl;
 
-      
-
-      this.setState({ loading: true });
       if (match.params.brandId) {
-        axios.put(`${API_END_POINT}/api/v1/brand/${match.params.brandId}`, fd)
+        let cloneObject = Object.assign({}, brand)
+        updateBrand(match.params.brandId, cloneObject)
           .then((response) => {
-            if (response.data && response.data.status && response.status === 200) {
               window.alert("Updated !");
               this.setState({ loading: false });
-            } else {
-              window.alert('ERROR UPDATING !')
-              this.setState({ loading: false });
-            }
           })
           .catch((err) => {
             window.alert('ERROR UPDATING !')
@@ -172,15 +98,10 @@ export default class BrandForm extends React.Component {
           })
       }
       else {
-        axios.post(`${API_END_POINT}/api/v1/brand`, fd)
+        addBrand(brand)
           .then((response) => {
-            if (response.data && response.data.status && response.status === 200) {
               window.alert("SUCCESS !");
               this.setState({ loading: false });
-            } else {
-              window.alert('ERROR SAVING !')
-              this.setState({ loading: false });
-            }
           })
           .catch((err) => {
             window.alert('ERROR SAVING !')
@@ -190,11 +111,10 @@ export default class BrandForm extends React.Component {
     }
   }
 
-  handleImages = (event) => {
-    const { name } = event.target;
-    const { brand } = this.state;
-    brand[name] = event.target.files[0];
-    this.setState({ brand });
+  handleProfileImage = (event) => {
+    this.setState({
+      image: event.target.files[0]
+    });
   }
 
   render() {
@@ -255,7 +175,7 @@ export default class BrandForm extends React.Component {
                           accept="image/*"
                           name="image"
                           className="form-control"
-                          onChange={this.handleImages}
+                          onChange={this.handleProfileImage}
                           // multiple
                           // required
                         />
