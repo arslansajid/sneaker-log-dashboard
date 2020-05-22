@@ -222,6 +222,23 @@ export default class EventForm extends React.Component {
                       </div>
                     </div>
 
+                    {appEvent.image
+                      ? (
+                        <div className="form-group row">
+                        <label className="control-label col-md-3 col-sm-3"></label>
+                        <div className="col-md-6 col-sm-6">
+                          <img
+                            style={{marginRight: '5px'}}
+                            width="100"
+                            className="img-fluid"
+                            src={`${appEvent.image}`}
+                            alt="profileImage"
+                          />
+                        </div>
+                      </div>
+                      ) : null
+                    }
+
                     <div className="form-group row">
                       <label
                         className="control-label col-md-3 col-sm-3"
