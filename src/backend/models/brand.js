@@ -1,10 +1,9 @@
 
-export class Product {
+export class Brand {
     constructor(x) {
-        this.name = x.name;
         this.uuid = x.uuid;
-        this.isActive = x.isActive;
-        this.images = x.images;
+        this.name = x.name;
+        this.image = x.image;
         this.timestampAdded = x.timestampAdded;
     }
 
@@ -13,21 +12,19 @@ export class Product {
 
         if (!data) return null;
 
-        return new Product({
-            name: data['name'] ?? '',
+        return new Brand({
             uuid: doc.id,
-            isActive: data['isActive'] ?? false,
-            images: data['images'] ?? [],
+            name: data['name'] ? data['name'] : '',
+            image: data['image'] ? data['image'] : [],
             timestampAdded: new Date(),
         });
     }
 
     toJson(x) {
         return {
-            name: x.name,
             uuid: x.uuid,
-            isActive: x.isActive,
-            images: x.images,
+            name: x.name,
+            image: x.image,
             timestampAdded: x.timestampAdded,
         };
     }
