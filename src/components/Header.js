@@ -67,7 +67,7 @@ class Header extends Component {
             <img className={`img-fluid companyLogo`} src={`${require('sneaker.png')}`} />
           </div>
           <div style={{backgroundColor: "#382636"}} className={`png-logo`}>
-            <img className={`img-fluid companyLogo`} src={`${require('sneaker.png')}`} />
+            <img className={`img-fluid companyLogo`} src={`${require('favicon_io/192x192.png')}`} />
           </div>
         </NavbarBrand>
         <NavbarToggler className="d-md-down-none mr-auto" onClick={this.sidebarToggle}>
