@@ -1,10 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import axios from 'axios';
 import RichTextEditor from 'react-rte';
 import { Button } from 'reactstrap';
-import { API_END_POINT } from '../config';
-import Cookie from 'js-cookie';
+import moment from 'moment';
+import { addSneakersReleaseDate, updateSneakersReleaseDate, getSneakersReleaseDateById } from "../backend/services/sneakerReleaseService";
+import {firebase} from "../backend/firebase";
+import {imageResizeFileUri} from "../static/_imageUtils";
+import { v4 as uuidv4 } from 'uuid';
 
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
@@ -20,11 +22,12 @@ export default class SneakersForm extends React.Component {
       sneakers: {
         name: '',
         image: "",
-        releasedDate: "",
+        releaseDate: "",
       },
       startDate: null,
       endDate: null,
       focusedInput: null,
+      image: "",
       description: RichTextEditor.createEmptyValue(),
     };
     
@@ -35,63 +38,14 @@ export default class SneakersForm extends React.Component {
   componentDidMount() {
     const { match } = this.props;
     if (match.params.sneakersId) {
-      axios.get(`${API_END_POINT}/api/v1/sneakers/${match.params.sneakersId}`)
+      getSneakersReleaseDateById(match.params.sneakersId)
       .then((response) => {
-        let data  = response.data.sneakers;
-        data["video_files"] = [];
         this.setState({
-          sneakers: data,
-        }, () => {
-          const {sneakers} = this.state;
-          this.getWorkoutDayById(sneakers.workout_day_id);
-          if(sneakers.videos_url === null) {
-            sneakers.video_files = [];
-            this.setState({ sneakers })
-          } else {
-            this.setState({videoInputCount: sneakers.videos_url.length })
-          }
+          sneakers: response,
+          startDate: moment(new Date(response.releaseDate.seconds*1000)),
         });
       });
     }
-  }
-
-  getWorkoutDays = () => {
-    axios.get(`${API_END_POINT}/api/v1/workout_days`)
-    .then(response => {
-      this.setState({
-        workoutDays: response.data.data,
-        responseMessage: 'No Workout Days Found...'
-      })
-    })
-  }
-
-  getWorkoutDayById = (workoutDayId) => {
-    axios.get(`${API_END_POINT}/api/v1/workout_days/${workoutDayId}`)
-    .then((response) => {
-      this.setState({
-        workoutDay: response.data.data,
-      });
-    });
-  }
-
-  setWorkoutDay(selectedWorkoutDay) {
-    this.setState(prevState => ({
-      workoutDay: selectedWorkoutDay,
-      sneakers: {
-        ...prevState.sneakers,
-        workout_day_id: !!selectedWorkoutDay ? selectedWorkoutDay.id : "",
-      },
-    }));
-  }
-
-  setCity(selectedCity) {
-    this.setState(prevState => ({
-      city: selectedCity,
-      sneakers: {
-        ...prevState.sneakers,
-        city_id: selectedCity.ID,
-      },
-    }));
   }
 
   setDescription(description) {
@@ -118,41 +72,43 @@ export default class SneakersForm extends React.Component {
     this.setState({ sneakers });
   }
 
-  postSneakers(event) {
+  postSneakers = async(event) => {
     event.preventDefault();
     const { match, history } = this.props;
-    const { loading, sneakers } = this.state;
+    const { loading, sneakers, image } = this.state;
     if (!loading) {
       const fd = new FormData();
 
-      // let videosArray = [];
-      // for (let index = 0; index < sneakers.video_files.length; index += 1) {
-      //   videosArray.push(sneakers.video_files[index]);
-      // }
-      if(!!sneakers.video_files && sneakers.video_files.length > 0) {
-        sneakers.video_files.forEach((video, index) => {
-          fd.append(`video_files[${index}]`, video);
-        });
-        delete sneakers["video_files"];
+      this.setState({ loading: true });
+
+      let imageFile = image;
+
+      let downloadUrl;
+      let imageUri;
+
+      if (imageFile) {
+          imageUri = (await imageResizeFileUri({ file: imageFile }));
+
+          const storageRef = firebase
+              .storage()
+              .ref()
+              .child('Sneakers')
+              .child(`${uuidv4()}.jpeg`);
+
+          if (imageUri) {
+              await storageRef.putString(imageUri, 'data_url');
+              downloadUrl = await storageRef.getDownloadURL();
+          }
       }
 
-      Object.keys(sneakers).forEach((eachState) => {
-        fd.append(`${eachState}`, sneakers[eachState]);
-      })
+      sneakers.image = downloadUrl;
 
-      
-
-      this.setState({ loading: true });
       if (match.params.sneakersId) {
-        axios.put(`${API_END_POINT}/api/v1/sneakers/${match.params.sneakersId}`, fd)
+        let cloneObject = Object.assign({}, sneakers)
+        updateSneakersReleaseDate(match.params.sneakersId, cloneObject)
           .then((response) => {
-            if (response.data && response.data.status && response.status === 200) {
               window.alert("Updated !");
               this.setState({ loading: false });
-            } else {
-              window.alert('ERROR UPDATING !')
-              this.setState({ loading: false });
-            }
           })
           .catch((err) => {
             window.alert('ERROR UPDATING !')
@@ -160,15 +116,10 @@ export default class SneakersForm extends React.Component {
           })
       }
       else {
-        axios.post(`${API_END_POINT}/api/v1/sneakers`, fd)
+        addSneakersReleaseDate(sneakers)
           .then((response) => {
-            if (response.data && response.data.status && response.status === 200) {
               window.alert("SUCCESS !");
               this.setState({ loading: false });
-            } else {
-              window.alert('ERROR SAVING !')
-              this.setState({ loading: false });
-            }
           })
           .catch((err) => {
             window.alert('ERROR SAVING !')
@@ -178,11 +129,19 @@ export default class SneakersForm extends React.Component {
     }
   }
 
-  handleImages = (event) => {
-    const { name } = event.target;
-    const { sneakers } = this.state;
-    sneakers[name] = event.target.files[0];
-    this.setState({ sneakers });
+  handleImage = (event) => {
+    this.setState({
+      image: event.target.files[0]
+    });
+  }
+
+  handleDateChange = (date) => {
+    const {sneakers} = this.state;
+    sneakers.releaseDate = new Date(date);
+    this.setState({
+      startDate: date,
+      sneakers
+    })
   }
 
   render() {
@@ -204,7 +163,7 @@ export default class SneakersForm extends React.Component {
             <div className="col-md-12 col-sm-12">
               <div className="x_panel">
                 <div className="x_title">
-                  <h2>Enter Sneakers Details</h2>
+                  <h2>Enter Sneaker Release Details</h2>
                 </div>
                 <div className="x_content">
                   <br />
@@ -237,11 +196,10 @@ export default class SneakersForm extends React.Component {
                       <div className="col-md-6 col-sm-6">
                         <SingleDatePicker
                           date={this.state.startDate} // momentPropTypes.momentObj or null
-                          onDateChange={date => this.setState({ startDate: date })} // PropTypes.func.isRequired
+                          onDateChange={date => this.handleDateChange(date)} // PropTypes.func.isRequired
                           focused={this.state.focused} // PropTypes.bool
                           onFocusChange={({ focused }) => this.setState({ focused })} // PropTypes.func.isRequired
                           id="date-picker" // PropTypes.string.isRequired,
-                          minDate={today}
                           placeholder="Select date"
                         />
                       </div>
@@ -258,7 +216,7 @@ export default class SneakersForm extends React.Component {
                           accept="image/*"
                           name="image"
                           className="form-control"
-                          onChange={this.handleImages}
+                          onChange={this.handleImage}
                         />
                       </div>
                     </div>
