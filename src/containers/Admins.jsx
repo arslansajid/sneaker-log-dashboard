@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 // import {Pagination, Modal, Button} from 'react-bootstrap';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import {getAdmins} from "../backend/services/adminService"
 
 import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
@@ -13,11 +14,7 @@ export default class Admin extends React.Component {
     super(props);
 
     this.state = {
-      admins: [{
-        id: 1,
-        name: "Admin User",
-        email: "admin@sneakerlog.com"
-      }],
+      admins: [],
       activePage: 1,
       pages: 1,
       q: '',
@@ -30,6 +27,8 @@ export default class Admin extends React.Component {
 
   componentWillMount() {
     this.fetchMember();
+    let adminsResult =  getAdmins();
+    console.log("adminsResult", adminsResult)
   }
 
   fetchMember = () => {
@@ -172,14 +171,14 @@ export default class Admin extends React.Component {
                         <td>{index + 1}</td>
                         <td>{admin.name}</td>
                         <td>{admin.email}</td>
-                        <td>
+                        {/* <td>
                           <Link to={`/admin/edit-admin/${admin.id}`}>
                             <span className="fa fa-edit" aria-hidden="true"></span>
                           </Link>
                         </td>
                         <td>
                           <span className="fa fa-trash" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.deleteMember(admin.id, index)}></span>
-                        </td>
+                        </td> */}
                       </tr>
                     )) :
                     (

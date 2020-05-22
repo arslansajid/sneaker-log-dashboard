@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import RichTextEditor from 'react-rte';
 import { Button } from 'reactstrap';
-import { API_END_POINT } from '../config';
-import Cookie from 'js-cookie';
+import {signUp} from "../backend/services/authService";
 
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
@@ -14,149 +13,49 @@ export default class MemberForm extends React.Component {
     super(props);
     this.state = {
       loading: false,
-      member: {
+      admin: {
         name: '',
-        total_days: 0,
-        sets: 0,
-        reps: 0,
-        intensity: 0,
-        timer_type: '',
-        duration: 0,
-        rest_duration: 0,
-        position: 0,
-        video_files: [],
-        workout_day_id: this.props.match.params.dayId ? this.props.match.params.dayId : "",
+        email: '',
+        password: '',
+        confirmPassword: '',
       },
-      workoutDays: [],
-      workoutDay: '',
-      memberId: '',
-      profile_picture: '',
-      videoInputCount: 1,
       description: RichTextEditor.createEmptyValue(),
     };
-    
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.postMember = this.postMember.bind(this);
   }
 
   componentDidMount() {
     const { match } = this.props;
     if (match.params.memberId) {
-      axios.get(`${API_END_POINT}/api/v1/member/${match.params.memberId}`)
-      .then((response) => {
-        let data  = response.data.member;
-        data["video_files"] = [];
-        this.setState({
-          member: data,
-        }, () => {
-          const {member} = this.state;
-          this.getWorkoutDayById(member.workout_day_id);
-          if(member.videos_url === null) {
-            member.video_files = [];
-            this.setState({ member })
-          } else {
-            this.setState({videoInputCount: member.videos_url.length })
-          }
-        });
-      });
+      console.log("EDITING SCENARIO")
     }
-    if (match.params.dayId) {
-      this.getWorkoutDayById(match.params.dayId)
-    } else {
-      this.getWorkoutDays();
-    }
-  }
-
-  getWorkoutDays = () => {
-    axios.get(`${API_END_POINT}/api/v1/workout_days`)
-    .then(response => {
-      this.setState({
-        workoutDays: response.data.data,
-        responseMessage: 'No Workout Days Found...'
-      })
-    })
-  }
-
-  getWorkoutDayById = (workoutDayId) => {
-    axios.get(`${API_END_POINT}/api/v1/workout_days/${workoutDayId}`)
-    .then((response) => {
-      this.setState({
-        workoutDay: response.data.data,
-      });
-    });
-  }
-
-  setWorkoutDay(selectedWorkoutDay) {
-    this.setState(prevState => ({
-      workoutDay: selectedWorkoutDay,
-      member: {
-        ...prevState.member,
-        workout_day_id: !!selectedWorkoutDay ? selectedWorkoutDay.id : "",
-      },
-    }));
-  }
-
-  setCity(selectedCity) {
-    this.setState(prevState => ({
-      city: selectedCity,
-      member: {
-        ...prevState.member,
-        city_id: selectedCity.ID,
-      },
-    }));
   }
 
   setDescription(description) {
-    const { member } = this.state;
-    member.description = description.toString('html');
+    const { admin } = this.state;
+    admin.description = description.toString('html');
     this.setState({
-      member,
+      admin,
       description,
     });
   }
 
-  handleInputChange(event) {
+  handleInputChange = (event) => {
     const { value, name } = event.target;
 
-    const { member } = this.state;
-    member[name] = value;
-    this.setState({ member });
+    const { admin } = this.state;
+    admin[name] = value;
+    this.setState({ admin });
   }
 
-  handleVideoURLChange = (event, index) => {
-    const { name } = event.target;
-    const { member } = this.state;
-    member[name][index] = event.target.files[0];
-    this.setState({ member });
-  }
-
-  postMember(event) {
+  postAdmin = async (event) => {
     event.preventDefault();
     const { match, history } = this.props;
-    const { loading, member } = this.state;
-    if (!loading) {
-      const fd = new FormData();
-
-      // let videosArray = [];
-      // for (let index = 0; index < member.video_files.length; index += 1) {
-      //   videosArray.push(member.video_files[index]);
-      // }
-      if(!!member.video_files && member.video_files.length > 0) {
-        member.video_files.forEach((video, index) => {
-          fd.append(`video_files[${index}]`, video);
-        });
-        delete member["video_files"];
-      }
-
-      Object.keys(member).forEach((eachState) => {
-        fd.append(`${eachState}`, member[eachState]);
-      })
-
-      
+    const { loading, admin } = this.state;
+    if (!loading ) {
 
       this.setState({ loading: true });
       if (match.params.memberId) {
-        axios.put(`${API_END_POINT}/api/v1/member/${match.params.memberId}`, fd)
+        axios.put(`${API_END_POINT}/api/v1/admin/${match.params.memberId}`, fd)
           .then((response) => {
             if (response.data && response.data.status && response.status === 200) {
               window.alert("Updated !");
@@ -172,35 +71,37 @@ export default class MemberForm extends React.Component {
           })
       }
       else {
-        axios.post(`${API_END_POINT}/api/v1/member`, fd)
-          .then((response) => {
-            if (response.data && response.data.status && response.status === 200) {
-              window.alert("SUCCESS !");
-              this.setState({ loading: false });
-            } else {
-              window.alert('ERROR SAVING !')
-              this.setState({ loading: false });
-            }
-          })
-          .catch((err) => {
-            window.alert('ERROR SAVING !')
-            this.setState({ loading: false });
-          })
+        if(admin.password === admin.confirmPassword) {
+        const signUpResult =  await signUp(admin.email, admin.password)
+
+        if(!!signUpResult) {
+          this.setState({ loading: false });
+        } else {
+          this.setState({ loading: false });
+        }
+      } else {
+        window.alert('Password does not match!')
+        this.setState({ loading: false });
+      }
+      
+        // signUp(admin.email, admin.password)
+        //   .then((response) => {
+        //       window.alert("Admin created uccessfully!");
+        //       this.setState({ loading: false });
+        //   })
+        //   .catch((err) => {
+        //     window.alert('ERROR SAVING !')
+        //     this.setState({ loading: false });
+        //   })
       }
     }
-  }
-
-  handleFile = (event) => {
-    this.setState({
-      profile_picture: event.target.files.length ? event.target.files[0] : '',
-    });
   }
 
   render() {
     console.log(this.state);
     const {
       loading,
-      member,
+      admin,
       description,
       workoutDay,
       workoutDays,
@@ -223,7 +124,7 @@ export default class MemberForm extends React.Component {
                     id="demo-form2"
                     data-parsley-validate
                     className="form-horizontal form-label-left"
-                    onSubmit={this.postMember}
+                    onSubmit={this.postAdmin}
                   >
 
                     <div className="form-group row">
@@ -237,7 +138,7 @@ export default class MemberForm extends React.Component {
                           type="text"
                           name="name"
                           className="form-control"
-                          value={member.name}
+                          value={admin.name}
                           onChange={this.handleInputChange}
                         />
                       </div>
@@ -254,7 +155,7 @@ export default class MemberForm extends React.Component {
                           type="email"
                           name="email"
                           className="form-control"
-                          value={member.email}
+                          value={admin.email}
                           onChange={this.handleInputChange}
                         />
                       </div>
@@ -271,7 +172,7 @@ export default class MemberForm extends React.Component {
                           type="password"
                           name="password"
                           className="form-control"
-                          value={member.password}
+                          value={admin.password}
                           onChange={this.handleInputChange}
                         />
                       </div>
@@ -288,7 +189,7 @@ export default class MemberForm extends React.Component {
                           type="password"
                           name="confirmPassword"
                           className="form-control"
-                          value={member.confirmPassword}
+                          value={admin.confirmPassword}
                           onChange={this.handleInputChange}
                         />
                       </div>
