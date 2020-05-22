@@ -7,186 +7,64 @@ import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
 import {toolbarConfig} from "../static/_textEditor";
 
-import Select from 'react-select';
-import 'react-select/dist/react-select.css';
+import { updatePolicy, getPolicy } from '../backend/services/policyService';
 
 export default class PrivacyPolicyForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      policy: [],
       loading: false,
-      privacyPolicy: {
-        name: '',
-      },
       description: RichTextEditor.createEmptyValue(),
     };
-    
-    this.handleInputChange = this.handleInputChange.bind(this);
     this.postPrivacyPolicy = this.postPrivacyPolicy.bind(this);
   }
-
+  
   componentDidMount() {
-    const { match } = this.props;
-    if (match.params.newsId) {
-      axios.get(`${API_END_POINT}/api/v1/privacyPolicy/${match.params.newsId}`)
+      getPolicy()
       .then((response) => {
-        let data  = response.data.privacyPolicy;
-        data["video_files"] = [];
+        console.log(response);
         this.setState({
-          privacyPolicy: data,
-        }, () => {
-          const {privacyPolicy} = this.state;
-          this.getWorkoutDayById(privacyPolicy.workout_day_id);
-          if(privacyPolicy.videos_url === null) {
-            privacyPolicy.video_files = [];
-            this.setState({ privacyPolicy })
-          } else {
-            this.setState({videoInputCount: privacyPolicy.videos_url.length })
-          }
+          policy: response,
+          description: RichTextEditor.createValueFromString(response[0].privacyPolicy, 'html'),
         });
       });
-    }
-    if (match.params.dayId) {
-      this.getWorkoutDayById(match.params.dayId)
-    } else {
-      this.getWorkoutDays();
-    }
   }
 
-  getWorkoutDays = () => {
-    axios.get(`${API_END_POINT}/api/v1/workout_days`)
-    .then(response => {
-      this.setState({
-        workoutDays: response.data.data,
-        responseMessage: 'No Workout Days Found...'
-      })
-    })
-  }
-
-  getWorkoutDayById = (workoutDayId) => {
-    axios.get(`${API_END_POINT}/api/v1/workout_days/${workoutDayId}`)
-    .then((response) => {
-      this.setState({
-        workoutDay: response.data.data,
-      });
-    });
-  }
-
-  setWorkoutDay(selectedWorkoutDay) {
-    this.setState(prevState => ({
-      workoutDay: selectedWorkoutDay,
-      privacyPolicy: {
-        ...prevState.privacyPolicy,
-        workout_day_id: !!selectedWorkoutDay ? selectedWorkoutDay.id : "",
-      },
-    }));
-  }
-
-  setCity(selectedCity) {
-    this.setState(prevState => ({
-      city: selectedCity,
-      privacyPolicy: {
-        ...prevState.privacyPolicy,
-        city_id: selectedCity.ID,
-      },
-    }));
-  }
-
-  setDescription(description) {
-    const { privacyPolicy } = this.state;
-    privacyPolicy.description = description.toString('html');
+  setDescription = (description) => {
+    const { policy } = this.state;
+    policy[0].privacyPolicy = description.toString('html');
     this.setState({
-      privacyPolicy,
+      policy,
       description,
     });
   }
 
-  handleInputChange(event) {
-    const { value, name } = event.target;
-
-    const { privacyPolicy } = this.state;
-    privacyPolicy[name] = value;
-    this.setState({ privacyPolicy });
-  }
-
-  handleVideoURLChange = (event, index) => {
-    const { name } = event.target;
-    const { privacyPolicy } = this.state;
-    privacyPolicy[name][index] = event.target.files[0];
-    this.setState({ privacyPolicy });
-  }
-
   postPrivacyPolicy(event) {
     event.preventDefault();
-    const { match, history } = this.props;
-    const { loading, privacyPolicy } = this.state;
+    const { loading, description, policy } = this.state;
     if (!loading) {
       const fd = new FormData();
 
-      // let videosArray = [];
-      // for (let index = 0; index < privacyPolicy.video_files.length; index += 1) {
-      //   videosArray.push(privacyPolicy.video_files[index]);
-      // }
-      if(!!privacyPolicy.video_files && privacyPolicy.video_files.length > 0) {
-        privacyPolicy.video_files.forEach((video, index) => {
-          fd.append(`video_files[${index}]`, video);
-        });
-        delete privacyPolicy["video_files"];
-      }
-
-      Object.keys(privacyPolicy).forEach((eachState) => {
-        fd.append(`${eachState}`, privacyPolicy[eachState]);
-      })
-
-      
-
       this.setState({ loading: true });
-      if (match.params.newsId) {
-        axios.put(`${API_END_POINT}/api/v1/privacyPolicy/${match.params.newsId}`, fd)
+        let cloneObject = Object.assign({}, policy[0])
+        updatePolicy(policy[0].uuid, cloneObject)
           .then((response) => {
-            if (response.data && response.data.status && response.status === 200) {
               window.alert("Updated !");
               this.setState({ loading: false });
-            } else {
-              window.alert('ERROR UPDATING !')
-              this.setState({ loading: false });
-            }
           })
           .catch((err) => {
+            console.log(err)
             window.alert('ERROR UPDATING !')
             this.setState({ loading: false });
           })
       }
-      else {
-        axios.post(`${API_END_POINT}/api/v1/privacyPolicy`, fd)
-          .then((response) => {
-            if (response.data && response.data.status && response.status === 200) {
-              window.alert("SUCCESS !");
-              this.setState({ loading: false });
-            } else {
-              window.alert('ERROR SAVING !')
-              this.setState({ loading: false });
-            }
-          })
-          .catch((err) => {
-            window.alert('ERROR SAVING !')
-            this.setState({ loading: false });
-          })
-      }
-    }
-  }
-
-  handleFile = (event) => {
-    this.setState({
-      profile_picture: event.target.files.length ? event.target.files[0] : '',
-    });
   }
 
   render() {
     console.log(this.state);
     const {
       description,
-      privacyPolicy,
     } = this.state;
     return (
       <div className="row animated fadeIn">
@@ -216,23 +94,6 @@ export default class PrivacyPolicyForm extends React.Component {
                       }}
                     />
                   </div>
-
-
-                    {/* <div className="form-group row">
-                      <label className="control-label col-md-3 col-sm-3">Workout Day</label>
-                      <div className="col-md-6 col-sm-6">
-                      <Select
-                        onChange={(val) => this.setWorkoutDay(val)}
-                        options={workoutDays}
-                        placeholder="Select workout day"
-                        value={workoutDay}
-                        valueKey="id"
-                        labelKey="name"
-                        isClearable={false}
-                        disabled={workoutDaySelected}
-                      />
-                      </div>
-                    </div> */}
 
                     <div className="ln_solid" />
                     <div className="form-group row">
