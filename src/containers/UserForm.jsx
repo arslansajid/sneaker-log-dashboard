@@ -4,6 +4,9 @@ import axios from 'axios';
 import RichTextEditor from 'react-rte';
 import { Button } from 'reactstrap';
 import { addUser, updateUser, getUserById } from "../backend/services/usersService";
+import {firebase} from "../backend/firebase";
+import {imageResizeFileUri} from "../static/_imageUtils";
+import { v4 as uuidv4 } from 'uuid';
 
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
@@ -26,6 +29,7 @@ export default class UserForm extends React.Component {
         profileImage: '',
         timestampRegister: new Date(),
       },
+      image: "",
       userId: '',
       description: RichTextEditor.createEmptyValue(),
     };
@@ -56,12 +60,35 @@ export default class UserForm extends React.Component {
     this.setState({ user });
   }
 
-  postUser(event) {
+  postUser = async (event) => {
     event.preventDefault();
     const { match } = this.props;
-    const { loading, user } = this.state;
+    const { loading, user, image } = this.state;
     if (!loading) {
       this.setState({ loading: true });
+
+      let imageFile = image;
+
+      let downloadUrl;
+      let imageUri;
+
+      if (imageFile) {
+          imageUri = (await imageResizeFileUri({ file: imageFile }));
+
+          const storageRef = firebase
+              .storage()
+              .ref()
+              .child('Users')
+              .child(`${uuidv4()}.jpeg`);
+
+          if (imageUri) {
+              await storageRef.putString(imageUri, 'data_url');
+              downloadUrl = await storageRef.getDownloadURL();
+          }
+      }
+
+      user.profileImage = downloadUrl;
+
       if (match.params.userId) {
         let cloneObject = Object.assign({}, user)
         updateUser(match.params.userId, cloneObject)
@@ -88,11 +115,10 @@ export default class UserForm extends React.Component {
     }
   }
 
-  handleImages = (event) => {
-    const { name } = event.target;
-    const { user } = this.state;
-    user[name] = event.target.files[0];
-    this.setState({ user });
+  handleProfileImage = (event) => {
+    this.setState({
+      image: event.target.files[0]
+    });
   }
 
   render() {
@@ -175,9 +201,9 @@ export default class UserForm extends React.Component {
                         <input
                           type="file"
                           accept="image/*"
-                          name="image"
+                          name="profileImage"
                           className="form-control"
-                          onChange={this.handleImages}
+                          onChange={this.handleProfileImage}
                         />
                       </div>
                     </div>

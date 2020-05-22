@@ -168,7 +168,7 @@ export default class Users extends React.Component {
                 this.state.users.map((user, index) => (
                   <tr key={index}>
                   <td>{index + 1}</td>
-                  <td>{<img style={{height: '50px', width: '50px'}} src={user.profile_picture} />}</td>
+                  <td>{<img style={{height: '50px', width: '50px'}} src={user.profileImage} />}</td>
                   <td>{user.name}</td>
                   <td>{user.userName}</td>
                   <td>{user.phone}</td>
