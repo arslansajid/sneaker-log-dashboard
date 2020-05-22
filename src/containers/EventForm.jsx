@@ -126,11 +126,12 @@ export default class EventForm extends React.Component {
         updateEvent(match.params.eventId, cloneObject)
           .then((response) => {
               window.alert('Event updated successfully.')
+              history.goBack();
               this.setState({ loading: false });
           })
           .catch((err) => {
-            console.log(err)
             window.alert('Error updating event.')
+            history.goBack();
             this.setState({ loading: false });
           })
       }

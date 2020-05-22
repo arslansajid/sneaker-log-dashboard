@@ -40,6 +40,7 @@ export default class UserForm extends React.Component {
 
   componentDidMount() {
     const { match } = this.props;
+    console.log("this.props", this.props)
     if (match.params.userId)
       getUserById(match.params.userId)
         .then((response) => {
@@ -62,7 +63,7 @@ export default class UserForm extends React.Component {
 
   postUser = async (event) => {
     event.preventDefault();
-    const { match } = this.props;
+    const { match, history } = this.props;
     const { loading, user, image } = this.state;
     if (!loading) {
       this.setState({ loading: true });
@@ -93,6 +94,7 @@ export default class UserForm extends React.Component {
         updateUser(match.params.userId, cloneObject)
           .then((response) => {
             window.alert("User updated successfully");
+            history.goBack();
             this.setState({ loading: false });
           })
           .catch((err) => {
@@ -105,6 +107,7 @@ export default class UserForm extends React.Component {
           .then((response) => {
             window.alert("User saved successfully");
             this.setState({ loading: false });
+            history.goBack();
           })
           .catch((err) => {
             window.alert('ERROR!')

@@ -76,6 +76,7 @@ export default class MemberForm extends React.Component {
 
         if(!!signUpResult) {
           this.setState({ loading: false });
+          history.goBack();
         } else {
           this.setState({ loading: false });
         }

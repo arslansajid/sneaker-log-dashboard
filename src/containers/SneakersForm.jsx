@@ -107,6 +107,7 @@ export default class SneakersForm extends React.Component {
         updateSneakersReleaseDate(match.params.sneakersId, cloneObject)
           .then((response) => {
               window.alert("Updated successfully.");
+              history.goBack();
               this.setState({ loading: false });
           })
           .catch((err) => {
@@ -118,6 +119,7 @@ export default class SneakersForm extends React.Component {
         addSneakersReleaseDate(sneakers)
           .then((response) => {
               window.alert("Created suuccessfully !");
+              history.goBack();
               this.setState({ loading: false });
           })
           .catch((err) => {

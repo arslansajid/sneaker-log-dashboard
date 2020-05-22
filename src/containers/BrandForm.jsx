@@ -90,11 +90,13 @@ export default class BrandForm extends React.Component {
           .then((response) => {
               console.log("response", response)
               window.alert("Brand updated successfully.");
+              history.goBack();
               this.setState({ loading: false });
           })
           .catch((err) => {
             console.log("error", err)
             window.alert('Error updating brand.')
+            history.goBack();
             this.setState({ loading: false });
           })
       }
