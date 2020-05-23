@@ -1,5 +1,5 @@
 import 'date-fns';
-import React from 'react';
+import React, {useEffect} from 'react';
 import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
 import {
@@ -9,11 +9,11 @@ import {
 } from '@material-ui/pickers';
 
 export default function MaterialUIPickers(props) {
-    const {open, label, setIsOpen, onTimePickerClose} = props;
-    const [selectedDate, setSelectedDate] = React.useState(new Date());
+    const {open, label, value, setIsOpen, onTimePickerClose} = props;
+    // const [selectedDate, setSelectedDate] = React.useState(props.value);
 
     const handleDateChange = (date) => {
-        setSelectedDate(date);
+        // setSelectedDate(date);
         onTimePickerClose(label, date)
     };
 
@@ -51,7 +51,7 @@ export default function MaterialUIPickers(props) {
                     margin="normal"
                     id="time-picker"
                     label={label}
-                    value={selectedDate}
+                    value={value}
                     onChange={handleDateChange}
                     KeyboardButtonProps={{
                         'aria-label': 'change time',

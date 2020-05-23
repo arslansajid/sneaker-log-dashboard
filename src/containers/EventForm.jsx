@@ -22,12 +22,14 @@ export default class EventForm extends React.Component {
       appEvent: {
         name: '',
         date: '',
-        time: '',
+        time: {},
         location: '',
         about: '',
         image: '',
       },
       description: RichTextEditor.createEmptyValue(),
+      startTime: null,
+      endTime: null,
       startDate: null,
       endDate: null,
       focusedInput: null,
@@ -51,6 +53,8 @@ export default class EventForm extends React.Component {
             appEvent: response,
             startDate: moment(new Date(response.date.seconds*1000)),
             time: response.time,
+            startTime: new Date(response.time.startTime * 1000),
+            endTime: new Date(response.time.endTime * 1000),
             description: RichTextEditor.createValueFromString(response.about, 'html'),
           });
         });
@@ -181,44 +185,52 @@ export default class EventForm extends React.Component {
     });
   }
 
-  // handleDateChange = (date) => {
-  //   const {appEvent} = this.state;
-  //   appEvent["date"] = new Date(date);
-  //   this.setState({
-  //     startDate: date,
-  //     appEvent
-  //   })
-  // }
-
-  handleTimeChange = (value) => {
+  handleDateChange = (date) => {
     const {appEvent} = this.state;
-    appEvent["time"] = value;
+    appEvent["date"] = new Date(date);
     this.setState({
-      time: value,
+      startDate: date,
       appEvent
     })
   }
 
+  // handleTimeChange = (value) => {
+  //   const {appEvent} = this.state;
+  //   appEvent["time"] = value;
+  //   this.setState({
+  //     time: value,
+  //     appEvent
+  //   })
+  // }
+
   handleTimePicker = (label, value) => {
     const {appEvent} = this.state;
-    
-    let startTime = new Date();
-    let endTime = new Date();
+
+    let time = {};
 
     if(label.includes("Start")) {
-      startTime = value;
+      time.startTime = value;
+      appEvent["time"].startTime = value
+      this.setState({
+        startTime: value,
+        appEvent
+      })
     }
     if(label.includes("End")) {
-      endTime = value;
+      time.endTime = value;
+      appEvent["time"].endTime = value
+      this.setState({
+        endTime: value,
+        appEvent
+      })
     }
-    let time = {
-      startTime,
-      endTime
-    }
-    appEvent["time"] = time;
-    this.setState({
-      appEvent
-    })
+
+    // console.log("Time object", time)
+
+    // appEvent["time"] = time;
+    // this.setState({
+    //   appEvent,
+    // })
   }
 
 
@@ -227,8 +239,8 @@ export default class EventForm extends React.Component {
     const {
       appEvent,
       description,
-      startDate,
-      endDate,
+      startTime,
+      endTime,
       focusedInput,
       selectedDate,
       showSnackBar,
@@ -284,7 +296,7 @@ export default class EventForm extends React.Component {
                       </div>
                     </div>
 
-                    {appEvent.image
+                    {appEvent.image &&  appEvent.image.length
                       ? (
                         <div className="form-group row">
                         <label className="control-label col-md-3 col-sm-3"></label>
@@ -361,12 +373,14 @@ export default class EventForm extends React.Component {
                         <TimePicker
                           open={false}
                           label={"Start Time"}
+                          value={startTime}
                           onTimePickerClose={this.handleTimePicker}
                         />
 
                         <TimePicker
                           open={false}
                           label={"End Time"}
+                          value={endTime}
                           onTimePickerClose={this.handleTimePicker}
                         />
                         </div>

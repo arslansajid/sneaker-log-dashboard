@@ -199,7 +199,7 @@ export default class UserForm extends React.Component {
                       </div>
                     </div>
 
-                    {user.profileImage
+                    {user.profileImage && user.profileImage.length
                       ? (
                         <div className="form-group row">
                         <label className="control-label col-md-3 col-sm-3"></label>

@@ -257,7 +257,7 @@ export default class SneakersForm extends React.Component {
                       </div>
                     </div>
 
-                    {sneakers.image
+                    {sneakers.image && sneakers.image.length
                       ? (
                         <div className="form-group row">
                         <label className="control-label col-md-3 col-sm-3"></label>
