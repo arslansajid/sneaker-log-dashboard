@@ -3,6 +3,7 @@ import RichTextEditor from 'react-rte';
 import { Button } from 'reactstrap';
 import { toolbarConfig } from "../static/_textEditor";
 import { getTerms, updateTerms } from "../backend/services/termsService"
+import SnackBar from "../components/SnackBar";
 
 export default class TermsServiceForm extends React.Component {
   constructor(props) {
@@ -11,6 +12,9 @@ export default class TermsServiceForm extends React.Component {
       terms: [],
       loading: false,
       description: RichTextEditor.createEmptyValue(),
+      showSnackBar: false,
+      snackBarMessage: "",
+      snackBarVariant: "success"
     };
   }
 
@@ -44,23 +48,44 @@ export default class TermsServiceForm extends React.Component {
       let cloneObject = Object.assign({}, terms[0])
       updateTerms(terms[0].uuid, cloneObject)
         .then((response) => {
-          window.alert("Updated !");
-          this.setState({ loading: false });
+          this.setState({
+            loading: false,
+            showSnackBar: true,
+            snackBarMessage: "Updated successfully",
+            snackBarVariant: "success",
+          });
         })
         .catch((err) => {
-          console.log(err)
-          window.alert('ERROR UPDATING !')
-          this.setState({ loading: false });
-        }
-        )
+          this.setState({
+            loading: false,
+            showSnackBar: true,
+            snackBarMessage: "Error while updating",
+            snackBarVariant: "error",
+          });
+        })
     }
+  }
+
+  closeSnackBar = () => {
+    this.setState({ showSnackBar: false })
   }
 
   render() {
     console.log(this.state);
-    const { description} = this.state;
+    const { description,
+      showSnackBar,
+      snackBarMessage,
+      snackBarVariant } = this.state; 
     return (
       <div className="row animated fadeIn">
+        {showSnackBar && (
+          <SnackBar
+            open={showSnackBar}
+            message={snackBarMessage}
+            variant={snackBarVariant}
+            onClose={() => this.closeSnackBar()}
+          />
+        )}
         <div className="col-12">
           <div className="row">
 
@@ -92,7 +117,7 @@ export default class TermsServiceForm extends React.Component {
                     <div className="form-group row">
                       <div className="col-md-6 col-sm-6 offset-md-3">
                         <Button className={`btn btn-success btn-lg ${this.state.loading ? 'disabled' : ''}`}>
-                          <i className={`fa fa-spinner fa-pulse ${this.state.loading ? '' : 'd-none'}`} /> Submit
+                          <i className={`fa fa-spinner fa-pulse ${this.state.loading ? '' : 'd-none'}`} /> Update
                         </Button>
                       </div>
                     </div>
