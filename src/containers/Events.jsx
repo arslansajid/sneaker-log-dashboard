@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import {getEvents, deleteEvent} from "../backend/services/eventService";
 // import {Pagination} from 'react-bootstrap';
+import SnackBar from "../components/SnackBar";
 
 import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
@@ -19,7 +20,10 @@ export default class Events extends React.Component {
       pages: 1,
       q: '',
       loading: false,
-      responseMessage: 'Loading Events...'
+      responseMessage: 'Loading Events...',
+      showSnackBar: false,
+      snackBarMessage: "",
+      snackBarVariant: "success"
     }
   }
 
@@ -51,9 +55,20 @@ export default class Events extends React.Component {
         .then(response => {
           const events = this.state.events.slice();
           events.splice(index, 1);
-          this.setState({ events });
-          window.alert("Event deleted successfully")
-        });
+          this.setState({
+            events,
+            showSnackBar: true,
+            snackBarMessage: "Event deleted successfully",
+            snackBarVariant: "success",
+          });
+        })
+        .catch(() => {
+          this.setState({
+            showSnackBar: true,
+            snackBarMessage: "Error deleting event",
+            snackBarVariant: "error",
+          });
+        })
     }
   }
 
@@ -91,11 +106,27 @@ export default class Events extends React.Component {
     }
   }
 
+  closeSnackBar = () => {
+    this.setState({ showSnackBar: false })
+  }
+
   render() {
     // console.log(this.state);
-    const {loading, events, responseMessage} = this.state; 
+    const {loading, events, responseMessage,
+      showSnackBar,
+      snackBarMessage,
+      snackBarVariant
+    } = this.state; 
     return (
       <div className="row animated fadeIn">
+        {showSnackBar && (
+          <SnackBar
+            open={showSnackBar}
+            message={snackBarMessage}
+            variant={snackBarVariant}
+            onClose={() => this.closeSnackBar()}
+          />
+        )}
         <div className="col-12">
           <div className="row space-1">
             <div className="col-sm-4">

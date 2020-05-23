@@ -7,6 +7,8 @@ import { toolbarConfig } from "../static/_textEditor";
 import {firebase} from "../backend/firebase";
 import {imageResizeFileUri} from "../static/_imageUtils";
 import { v4 as uuidv4 } from 'uuid';
+import SnackBar from "../components/SnackBar";
+import TimePicker from "../components/TimePicker"
 
 import { SingleDatePicker } from 'react-dates';
 import TimeRangePicker from '@wojtekmaj/react-timerange-picker';
@@ -31,6 +33,9 @@ export default class EventForm extends React.Component {
       focusedInput: null,
       time: ['', ''],
       image: "",
+      showSnackBar: false,
+      snackBarMessage: "",
+      snackBarVariant: "success"
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -125,29 +130,49 @@ export default class EventForm extends React.Component {
         let cloneObject = Object.assign({}, appEvent)
         updateEvent(match.params.eventId, cloneObject)
           .then((response) => {
-              window.alert('Event updated successfully.')
-              history.goBack();
-              this.setState({ loading: false });
+              this.setState({
+                loading: false,
+                showSnackBar: true,
+                snackBarMessage: "Event updated successfully",
+                snackBarVariant: "success",
+              });
           })
           .catch((err) => {
-            window.alert('Error updating event.')
-            history.goBack();
-            this.setState({ loading: false });
+            this.setState({
+              loading: false,
+              showSnackBar: true,
+              snackBarMessage: "Error updating event",
+              snackBarVariant: "error",
+            });
           })
       }
       else {
         addEvent(appEvent)
           .then((response) => {
-              window.alert('Event created successfully.')
-              this.setState({ loading: false });
+              this.setState({
+                loading: false,
+                showSnackBar: true,
+                snackBarMessage: "Event saved successfully",
+                snackBarVariant: "success",
+              });
           })
           .catch((err) => {
             console.log(err)
-            window.alert('Error creating event.')
-            this.setState({ loading: false });
+            this.setState({
+              loading: false,
+              showSnackBar: true,
+              snackBarMessage: "Error creating event",
+              snackBarVariant: "error",
+            });
           })
       }
     }
+  }
+
+  closeSnackBar = () => {
+    const { history } = this.props;
+    this.setState({ showSnackBar: false })
+    history.goBack();
   }
 
   handleImage = (event) => {
@@ -183,11 +208,25 @@ export default class EventForm extends React.Component {
       startDate,
       endDate,
       focusedInput,
-      selectedDate
+      selectedDate,
+      showSnackBar,
+      snackBarMessage,
+      snackBarVariant
     } = this.state;
-    const workoutDaySelected = this.props.match.params.dayId ? true : false
+
+    const { match } = this.props;
+    const isEdit = !!match.params.eventId; 
+
     return (
       <div className="row animated fadeIn">
+        {showSnackBar && (
+          <SnackBar
+            open={showSnackBar}
+            message={snackBarMessage}
+            variant={snackBarVariant}
+            onClose={() => this.closeSnackBar()}
+          />
+        )}
         <div className="col-12">
           <div className="row">
 
@@ -289,6 +328,10 @@ export default class EventForm extends React.Component {
                         />
                       </div>
                     </div>
+                    
+                    <TimePicker
+                      open={true}
+                    />
 
                     <div className="form-group row">
                       <label
@@ -341,7 +384,8 @@ export default class EventForm extends React.Component {
                     <div className="form-group row">
                       <div className="col-md-6 col-sm-6 offset-md-3">
                         <Button className={`btn btn-success btn-lg ${this.state.loading ? 'disabled' : ''}`}>
-                          <i className={`fa fa-spinner fa-pulse ${this.state.loading ? '' : 'd-none'}`} /> Submit
+                          <i className={`fa fa-spinner fa-pulse ${this.state.loading ? '' : 'd-none'}`} />
+                          {isEdit ? " Update" : " Submit"}
                         </Button>
                       </div>
                     </div>
