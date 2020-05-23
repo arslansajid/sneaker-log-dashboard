@@ -166,7 +166,9 @@ export default class SneakersForm extends React.Component {
   closeSnackBar = () => {
     const { history } = this.props;
     this.setState({ showSnackBar: false })
-    history.goBack();
+    if(this.state.snackBarVariant === "success") {
+      history.goBack();
+    }
   }
 
   render() {
