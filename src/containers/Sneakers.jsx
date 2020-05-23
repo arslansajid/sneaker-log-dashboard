@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { getSneakersReleaseDates, deleteSneakersReleaseDate } from "../backend/services/sneakerReleaseService";
 import SnackBar from "../components/SnackBar";
-
+import Swal from "sweetalert2"
 export default class Sneakers extends React.Component {
   constructor(props) {
     super(props);
@@ -44,7 +44,16 @@ export default class Sneakers extends React.Component {
   }
 
   deleteSneaker(sneakerId, index) {
-    if (confirm("Are you sure you want to delete this sneaker release date?")) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Delete'
+    }).then((result) => {
+      if (result.value) {
       deleteSneakersReleaseDate(sneakerId)
         .then(response => {
           const sneakers = this.state.sneakers.slice();
@@ -64,7 +73,8 @@ export default class Sneakers extends React.Component {
           });
         })
     }
-  }
+  })
+}
 
     // handleSearch() {
     //   const { q } = this.state;

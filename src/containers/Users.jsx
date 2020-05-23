@@ -5,6 +5,7 @@ import { Pagination } from 'react-bootstrap';
 import { getUsers, deleteUser } from "../backend/services/usersService";
 // import {signInWithEmail} from "../backend/services/authService";
 import SnackBar from "../components/SnackBar";
+import Swal from "sweetalert2";
 
 import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
@@ -59,8 +60,17 @@ export default class Users extends React.Component {
   }
 
   removeUser(userId, index) {
-    if (confirm("Are you sure you want to delete this user?")) {
-      deleteUser(userId)
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Delete'
+    }).then((result) => {
+      if (result.value) {
+        deleteUser(userId)
         .then(response => {
           const users = this.state.users.slice();
           users.splice(index, 1);
@@ -78,8 +88,9 @@ export default class Users extends React.Component {
             snackBarVariant: "error",
           });
         })
+      }
+    })
     }
-  }
 
   handleSelect(page) {
     axios.get(`/api/area?offset=${(page - 1) * 10}`)

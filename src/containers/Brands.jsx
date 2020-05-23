@@ -4,6 +4,7 @@ import axios from 'axios';
 import {Pagination} from 'react-bootstrap';
 import {getBrands, deleteBrand} from "../backend/services/brandService";
 import SnackBar from "../components/SnackBar";
+import Swal from "sweetalert2";
 
 import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
@@ -49,7 +50,16 @@ export default class Brand extends React.Component {
   }
   
   deleteBrand(brandId, index) {
-    if(confirm("Are you sure you want to delete this brand?")) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Delete'
+    }).then((result) => {
+      if (result.value) {
       deleteBrand(brandId)
         .then(response => {
           const brands = this.state.brands.slice();
@@ -69,6 +79,7 @@ export default class Brand extends React.Component {
           });
         })
     }
+  })
   }
 
   handleSelect(page) {

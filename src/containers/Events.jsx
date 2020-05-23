@@ -4,6 +4,7 @@ import axios from 'axios';
 import {getEvents, deleteEvent} from "../backend/services/eventService";
 // import {Pagination} from 'react-bootstrap';
 import SnackBar from "../components/SnackBar";
+import Swal from "sweetalert2";
 
 import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
@@ -50,7 +51,16 @@ export default class Events extends React.Component {
   }
   
   deleteEvent(eventId, index) {
-    if(confirm("Are you sure you want to delete this event?")) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Delete'
+    }).then((result) => {
+      if (result.value) {
       deleteEvent(eventId)
         .then(response => {
           const events = this.state.events.slice();
@@ -71,6 +81,7 @@ export default class Events extends React.Component {
         })
     }
   }
+  )}
 
   handleSelect(page) {
     axios.get(`/api/area?offset=${(page-1)*10}`)
@@ -186,7 +197,7 @@ export default class Events extends React.Component {
                   <td>{<img style={{height: '50px', width: '50px'}} src={event.image} />}</td> 
                   <td>{event.location}</td>
                   <td>{moment(new Date(event.date.seconds*1000)).format("DD MMM YYYY")}</td>
-                  <td>{moment(new Date(event.time.startTime.seconds*1000)).format("hh:mm A")} - {moment(new Date(event.time.endTime.seconds*1000)).format("hh:mm A")}</td>
+                  <td>{!!event.time && Object.keys(event.time).length ? `${moment(new Date(event.time.startTime.seconds*1000)).format("hh:mm A")} - ${moment(new Date(event.time.endTime.seconds*1000)).format("hh:mm A")}` : null}</td>
                   <td dangerouslySetInnerHTML={{__html: event.about}}></td>
                   <td>
                     <Link to={`/events/edit-event/${event.uuid}`}>
