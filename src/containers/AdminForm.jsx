@@ -4,6 +4,7 @@ import axios from 'axios';
 import RichTextEditor from 'react-rte';
 import { Button } from 'reactstrap';
 import {signUp} from "../backend/services/authService";
+import SnackBar from "../components/SnackBar";
 
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
@@ -20,6 +21,9 @@ export default class MemberForm extends React.Component {
         confirmPassword: '',
       },
       description: RichTextEditor.createEmptyValue(),
+      showSnackBar: false,
+      snackBarMessage: "",
+      snackBarVariant: "success"
     };
   }
 
@@ -71,31 +75,61 @@ export default class MemberForm extends React.Component {
           })
       }
       else {
-        if(admin.password === admin.confirmPassword) {
-        const signUpResult =  await signUp(admin.email, admin.password)
+      //   if(admin.password === admin.confirmPassword) {
+      //   const signUpResult =  await signUp(admin.email, admin.password);
+      //   if(!!signUpResult) {
+      //     this.setState({
+      //       loading: false,
+      //       showSnackBar: true,
+      //       snackBarMessage: "Admin saved successfully",
+      //       snackBarVariant: "success",
+      //     });
+      //   } else {
+      //     this.setState({
+      //       loading: false,
+      //       showSnackBar: true,
+      //       snackBarMessage: "Error creating admin",
+      //       snackBarVariant: "error",
+      //     });
+      //   }
+      // } else {
+      //   window.alert('Password does not match!')
+      //   this.setState({ loading: false });
+      // }
 
-        if(!!signUpResult) {
-          this.setState({ loading: false });
-          history.goBack();
-        } else {
-          this.setState({ loading: false });
-        }
-      } else {
-        window.alert('Password does not match!')
-        this.setState({ loading: false });
+      if(admin.password === admin.confirmPassword) {
+        signUp(admin.email, admin.password)
+          .then((response) => {
+            this.setState({
+              loading: false,
+              showSnackBar: true,
+              snackBarMessage: "Admin saved successfully",
+              snackBarVariant: "success",
+            });
+          })
+          .catch((err) => {
+            this.setState({
+              loading: false,
+              showSnackBar: true,
+              snackBarMessage: err,
+              snackBarVariant: "error",
+            });
+          })
       }
-      
-        // signUp(admin.email, admin.password)
-        //   .then((response) => {
-        //       window.alert("Admin created uccessfully!");
-        //       this.setState({ loading: false });
-        //   })
-        //   .catch((err) => {
-        //     window.alert('ERROR SAVING !')
-        //     this.setState({ loading: false });
-        //   })
+      else {
+        this.setState({
+          loading: false,
+          showSnackBar: true,
+          snackBarMessage: "Password does not match!",
+          snackBarVariant: "error",
+        });
       }
     }
+    }
+  }
+
+  closeSnackBar = () => {
+    this.setState({ showSnackBar: false })
   }
 
   render() {
@@ -104,13 +138,20 @@ export default class MemberForm extends React.Component {
       loading,
       admin,
       description,
-      workoutDay,
-      workoutDays,
-      videoInputCount
+      showSnackBar,
+      snackBarMessage,
+      snackBarVariant
     } = this.state;
-    const workoutDaySelected = this.props.match.params.dayId ? true : false
     return (
       <div className="row animated fadeIn">
+        {showSnackBar && (
+          <SnackBar
+            open={showSnackBar}
+            message={snackBarMessage}
+            variant={snackBarVariant}
+            onClose={() => this.closeSnackBar()}
+          />
+        )}
         <div className="col-12">
           <div className="row">
 
