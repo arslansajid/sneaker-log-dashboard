@@ -4,8 +4,6 @@ export class Admin {
         this.uuid = x.uuid;
         this.name = x.name;
         this.email = x.email;
-        this.password = x.password;
-        this.confirmPassword = x.confirmPassword;
         this.timestampAdded = x.timestampAdded;
     }
 
@@ -18,8 +16,6 @@ export class Admin {
             uuid: doc.id,
             name: data['name'] ? data['name'] : '',
             email: data['email'] ? data['email'] : [],
-            password: password['password'] ? password['password'] : [],
-            confirmPassword: confirmPassword['confirmPassword'] ? confirmPassword['confirmPassword'] : [],
             timestampAdded: new Date(),
         });
     }
@@ -29,8 +25,6 @@ export class Admin {
             uuid: x.uuid,
             name: x.name,
             email: x.email,
-            password: x.password,
-            confirmPassword: x.confirmPassword,
             timestampAdded: x.timestampAdded,
         };
     }

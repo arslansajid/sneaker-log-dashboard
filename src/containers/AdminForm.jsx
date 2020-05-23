@@ -4,6 +4,7 @@ import axios from 'axios';
 import RichTextEditor from 'react-rte';
 import { Button } from 'reactstrap';
 import {signUp} from "../backend/services/authService";
+import {addAdmin} from "../backend/services/adminService"
 import SnackBar from "../components/SnackBar";
 
 import Select from 'react-select';
@@ -75,37 +76,18 @@ export default class MemberForm extends React.Component {
           })
       }
       else {
-      //   if(admin.password === admin.confirmPassword) {
-      //   const signUpResult =  await signUp(admin.email, admin.password);
-      //   if(!!signUpResult) {
-      //     this.setState({
-      //       loading: false,
-      //       showSnackBar: true,
-      //       snackBarMessage: "Admin saved successfully",
-      //       snackBarVariant: "success",
-      //     });
-      //   } else {
-      //     this.setState({
-      //       loading: false,
-      //       showSnackBar: true,
-      //       snackBarMessage: "Error creating admin",
-      //       snackBarVariant: "error",
-      //     });
-      //   }
-      // } else {
-      //   window.alert('Password does not match!')
-      //   this.setState({ loading: false });
-      // }
-
       if(admin.password === admin.confirmPassword) {
         signUp(admin.email, admin.password)
           .then((response) => {
-            this.setState({
-              loading: false,
-              showSnackBar: true,
-              snackBarMessage: "Admin saved successfully",
-              snackBarVariant: "success",
-            });
+            addAdmin(admin) 
+            .then(() => { //double then beacuase adding data to admin document in firebase
+              this.setState({
+                loading: false,
+                showSnackBar: true,
+                snackBarMessage: "Admin saved successfully",
+                snackBarVariant: "success",
+              });
+            })
           })
           .catch((err) => {
             this.setState({
@@ -131,7 +113,9 @@ export default class MemberForm extends React.Component {
   closeSnackBar = () => {
     const { history } = this.props;
     this.setState({ showSnackBar: false })
-    history.goBack();
+    if(this.state.snackBarVariant === "success") {
+      history.goBack();
+    }
   }
 
   render() {

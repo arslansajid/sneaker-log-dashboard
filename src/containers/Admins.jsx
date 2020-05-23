@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 // import {Pagination, Modal, Button} from 'react-bootstrap';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import {getAdmins} from "../backend/services/adminService"
+import {getAdmins, deleteAdmin} from "../backend/services/adminService"
+import SnackBar from "../components/SnackBar";
+import Swal from "sweetalert2";
 
 import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
@@ -22,21 +24,22 @@ export default class Admin extends React.Component {
       responseMessage: 'Loading Admins...',
       showModal: false,
       inviteEmail: "",
+      showSnackBar: false,
+      snackBarMessage: "",
+      snackBarVariant: "success"
     }
   }
 
   componentWillMount() {
-    this.fetchMember();
-    let adminsResult =  getAdmins();
-    console.log("adminsResult", adminsResult)
+    this.fetchAdmins();
   }
 
-  fetchMember = () => {
+  fetchAdmins = () => {
     this.setState({ loading: true })
-    axios.get(`${API_END_POINT}/api/v1/admin`)
+    getAdmins()
       .then(response => {
         this.setState({
-          admins: response.data.data,
+          admins: response,
           loading: false,
           responseMessage: 'No Admins Found'
         })
@@ -49,16 +52,33 @@ export default class Admin extends React.Component {
       })
   }
 
-  deleteMember(memberId, index) {
-    if (confirm("Are you sure you want to delete this admin?")) {
-      axios.delete(`${API_END_POINT}/api/v1/admin/${memberId}`)
+  deleteAdmin(adminId, index) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Delete'
+    }).then((result) => {
+      if (result.value) {
+        deleteAdmin(adminId)
         .then(response => {
           const admins = this.state.admins.slice();
           admins.splice(index, 1);
           this.setState({ admins });
           window.alert(response.data.message);
-        });
+        })
+        .catch(() => {
+          this.setState({
+            showSnackBar: true,
+            snackBarMessage: "Error deleting admin",
+            snackBarVariant: "error",
+          });
+        })
     }
+  })
   }
 
   handleSelect(page) {
@@ -80,7 +100,7 @@ export default class Admin extends React.Component {
     if (q.length) {
       this.setState({ loading: true, admins: [], responseMessage: 'Loading Admin...' })
       // if(q === "") {
-      //   this.fetchMember();
+      //   this.fetchAdmins();
       // } else {
       axios.get(`${API_END_POINT}/api/items/admin/search`, { params: { "searchWord": this.state.q }, headers: { "auth-token": token } })
         .then((response) => {
@@ -111,9 +131,20 @@ export default class Admin extends React.Component {
 
   render() {
     // console.log(this.state);
-    const { loading, admins, responseMessage, showModal, inviteEmail } = this.state;
+    const { loading, admins, responseMessage, showModal, inviteEmail,
+      showSnackBar,
+      snackBarMessage,
+      snackBarVariant } = this.state; 
     return (
       <Fragment>
+        {showSnackBar && (
+          <SnackBar
+            open={showSnackBar}
+            message={snackBarMessage}
+            variant={snackBarVariant}
+            onClose={() => this.closeSnackBar()}
+          />
+        )}
         <div className="row animated fadeIn">
           <div className="col-12">
             <div className="row space-1">
@@ -130,7 +161,7 @@ export default class Admin extends React.Component {
                   value={this.state.q}
                   onChange={(event) => this.setState({q: event.target.value}, () => {
                     if(this.state.q === "") {
-                      this.fetchMember();
+                      this.fetchAdmins();
                     }
                   })}
                   onKeyPress={(event) => {
@@ -177,7 +208,7 @@ export default class Admin extends React.Component {
                           </Link>
                         </td>
                         <td>
-                          <span className="fa fa-trash" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.deleteMember(admin.id, index)}></span>
+                          <span className="fa fa-trash" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.deleteAdmin(admin.id, index)}></span>
                         </td> */}
                       </tr>
                     )) :

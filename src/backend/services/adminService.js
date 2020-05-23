@@ -5,7 +5,6 @@ import { Admin } from '../models/admin';
 
 export const getAdmins = async function () {
     const query = await db.collection('Admins').limit(20).get();
-
     let admins = [];
 
     query.docs.forEach((doc) => {
