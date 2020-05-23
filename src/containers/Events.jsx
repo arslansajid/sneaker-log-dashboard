@@ -185,8 +185,8 @@ export default class Events extends React.Component {
                   <td>{event.name}</td>
                   <td>{<img style={{height: '50px', width: '50px'}} src={event.image} />}</td> 
                   <td>{event.location}</td>
-                  <td>{moment(new Date(event.date.seconds*1000)).format("DD-MMM-YYYY")}</td>
-                  <td>{event.time.map((time, index) => ` ${time} ${index < 1 ? "-" : ""}`)}</td>
+                  <td>{moment(new Date(event.date.seconds*1000)).format("DD MMM YYYY")}</td>
+                  <td>{moment(new Date(event.time.startTime.seconds*1000)).format("hh:mm A")} - {moment(new Date(event.time.endTime.seconds*1000)).format("hh:mm A")}</td>
                   <td dangerouslySetInnerHTML={{__html: event.about}}></td>
                   <td>
                     <Link to={`/events/edit-event/${event.uuid}`}>

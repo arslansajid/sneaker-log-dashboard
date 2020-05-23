@@ -181,20 +181,42 @@ export default class EventForm extends React.Component {
     });
   }
 
-  handleDateChange = (date) => {
-    const {appEvent} = this.state;
-    appEvent["date"] = new Date(date);
-    this.setState({
-      startDate: date,
-      appEvent
-    })
-  }
+  // handleDateChange = (date) => {
+  //   const {appEvent} = this.state;
+  //   appEvent["date"] = new Date(date);
+  //   this.setState({
+  //     startDate: date,
+  //     appEvent
+  //   })
+  // }
 
   handleTimeChange = (value) => {
     const {appEvent} = this.state;
     appEvent["time"] = value;
     this.setState({
       time: value,
+      appEvent
+    })
+  }
+
+  handleTimePicker = (label, value) => {
+    const {appEvent} = this.state;
+    
+    let startTime = new Date();
+    let endTime = new Date();
+
+    if(label.includes("Start")) {
+      startTime = value;
+    }
+    if(label.includes("End")) {
+      endTime = value;
+    }
+    let time = {
+      startTime,
+      endTime
+    }
+    appEvent["time"] = time;
+    this.setState({
       appEvent
     })
   }
@@ -311,7 +333,7 @@ export default class EventForm extends React.Component {
                       </div>
                     </div>
 
-                    <div className="form-group row">
+                    {/* <div className="form-group row">
                       <label
                         className="control-label col-md-3 col-sm-3"
                       >Time
@@ -327,11 +349,29 @@ export default class EventForm extends React.Component {
                           amPmAriaLabel={"Select AM/PM"}
                         />
                       </div>
+                    </div> */}
+
+                    <div className="form-group row">
+                      <label
+                        className="control-label col-md-3 col-sm-3 d-flex align-items-center"
+                      >Time
+                      </label>
+                      <div className="col-md-6 col-sm-6">
+                        <div className="row justify-content-around">
+                        <TimePicker
+                          open={false}
+                          label={"Start Time"}
+                          onTimePickerClose={this.handleTimePicker}
+                        />
+
+                        <TimePicker
+                          open={false}
+                          label={"End Time"}
+                          onTimePickerClose={this.handleTimePicker}
+                        />
+                        </div>
+                      </div>
                     </div>
-                    
-                    <TimePicker
-                      open={true}
-                    />
 
                     <div className="form-group row">
                       <label
