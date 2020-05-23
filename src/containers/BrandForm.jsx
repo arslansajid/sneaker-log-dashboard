@@ -8,6 +8,7 @@ import { addBrand, updateBrand, getBrandById } from "../backend/services/brandSe
 import {firebase} from "../backend/firebase";
 import {imageResizeFileUri} from "../static/_imageUtils";
 import { v4 as uuidv4 } from 'uuid';
+import SnackBar from "../components/SnackBar";
 
 export default class BrandForm extends React.Component {
   constructor(props) {
@@ -23,6 +24,9 @@ export default class BrandForm extends React.Component {
       profile_picture: '',
       videoInputCount: 1,
       description: RichTextEditor.createEmptyValue(),
+      showSnackBar: false,
+      snackBarMessage: "",
+      snackBarVariant: "success"
     };
     
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -88,27 +92,39 @@ export default class BrandForm extends React.Component {
         let cloneObject = Object.assign({}, brand)
         updateBrand(match.params.brandId, cloneObject)
           .then((response) => {
-              console.log("response", response)
-              window.alert("Brand updated successfully.");
-              history.goBack();
-              this.setState({ loading: false });
+            this.setState({
+              loading: false,
+              showSnackBar: true,
+              snackBarMessage: "Brand updated successfully",
+              snackBarVariant: "success",
+            });
           })
           .catch((err) => {
-            console.log("error", err)
-            window.alert('Error updating brand.')
-            history.goBack();
-            this.setState({ loading: false });
+            this.setState({
+              loading: false,
+              showSnackBar: true,
+              snackBarMessage: "Error updating brand",
+              snackBarVariant: "error",
+            });
           })
       }
       else {
         addBrand(brand)
           .then((response) => {
-              window.alert("Brand created successfully.");
-              this.setState({ loading: false });
+            this.setState({
+              loading: false,
+              showSnackBar: true,
+              snackBarMessage: "Brand saved successfully",
+              snackBarVariant: "success",
+            });
           })
           .catch((err) => {
-            window.alert('Error adding brand.')
-            this.setState({ loading: false });
+            this.setState({
+              loading: false,
+              showSnackBar: true,
+              snackBarMessage: "Error adding brand",
+              snackBarVariant: "error",
+            });
           })
       }
     }
@@ -120,19 +136,36 @@ export default class BrandForm extends React.Component {
     });
   }
 
+  closeSnackBar = () => {
+    const { history } = this.props;
+    this.setState({ showSnackBar: false })
+    history.goBack();
+  }
+
   render() {
     console.log(this.state);
     const {
       loading,
       brand,
       description,
-      workoutDay,
-      workoutDays,
-      videoInputCount
+      showSnackBar,
+      snackBarMessage,
+      snackBarVariant
     } = this.state;
-    const workoutDaySelected = this.props.match.params.dayId ? true : false
+    
+    const { match } = this.props;
+    const isEdit = !!match.params.brandId; 
+
     return (
       <div className="row animated fadeIn">
+        {showSnackBar && (
+          <SnackBar
+            open={showSnackBar}
+            message={snackBarMessage}
+            variant={snackBarVariant}
+            onClose={() => this.closeSnackBar()}
+          />
+        )}
         <div className="col-12">
           <div className="row">
 
@@ -239,7 +272,8 @@ export default class BrandForm extends React.Component {
                     <div className="form-group row">
                       <div className="col-md-6 col-sm-6 offset-md-3">
                         <Button className={`btn btn-success btn-lg ${this.state.loading ? 'disabled' : ''}`}>
-                          <i className={`fa fa-spinner fa-pulse ${this.state.loading ? '' : 'd-none'}`} /> Submit
+                          <i className={`fa fa-spinner fa-pulse ${this.state.loading ? '' : 'd-none'}`} />
+                          {isEdit ? " Update" : " Submit"}
                         </Button>
                       </div>
                     </div>

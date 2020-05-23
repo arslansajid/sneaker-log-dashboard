@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import {Pagination} from 'react-bootstrap';
 import {getBrands, deleteBrand} from "../backend/services/brandService";
+import SnackBar from "../components/SnackBar";
 
 import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
@@ -18,7 +19,10 @@ export default class Brand extends React.Component {
       pages: 1,
       q: '',
       loading: false,
-      responseMessage: 'Loading Brands...'
+      responseMessage: 'Loading Brands...',
+      showSnackBar: false,
+      snackBarMessage: "",
+      snackBarVariant: "success"
     }
   }
 
@@ -50,9 +54,20 @@ export default class Brand extends React.Component {
         .then(response => {
           const brands = this.state.brands.slice();
           brands.splice(index, 1);
-          this.setState({ brands });
-          window.alert("Brand deleted successfully");
-        });
+          this.setState({
+            brands,
+            showSnackBar: true,
+            snackBarMessage: "Brand deleted successfully",
+            snackBarVariant: "success",
+          });
+        })
+        .catch(() => {
+          this.setState({
+            showSnackBar: true,
+            snackBarMessage: "Error deleting brand",
+            snackBarVariant: "error",
+          });
+        })
     }
   }
 
@@ -90,11 +105,26 @@ export default class Brand extends React.Component {
     }
   }
 
+  closeSnackBar = () => {
+    this.setState({ showSnackBar: false })
+  }
+
   render() {
     // console.log(this.state);
-    const {loading, brands, responseMessage} = this.state; 
+    const {loading, brands, responseMessage,
+      showSnackBar,
+      snackBarMessage,
+      snackBarVariant } = this.state; 
     return (
       <div className="row animated fadeIn">
+        {showSnackBar && (
+          <SnackBar
+            open={showSnackBar}
+            message={snackBarMessage}
+            variant={snackBarVariant}
+            onClose={() => this.closeSnackBar()}
+          />
+        )}
         <div className="col-12">
           <div className="row space-1">
             <div className="col-sm-4">
