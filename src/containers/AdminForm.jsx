@@ -129,7 +129,9 @@ export default class MemberForm extends React.Component {
   }
 
   closeSnackBar = () => {
+    const { history } = this.props;
     this.setState({ showSnackBar: false })
+    history.goBack();
   }
 
   render() {
@@ -142,6 +144,7 @@ export default class MemberForm extends React.Component {
       snackBarMessage,
       snackBarVariant
     } = this.state;
+    const { history } = this.props;
     return (
       <div className="row animated fadeIn">
         {showSnackBar && (
@@ -242,6 +245,11 @@ export default class MemberForm extends React.Component {
                       <div className="col-md-6 col-sm-6 offset-md-3">
                         <Button className={`btn btn-success btn-lg ${this.state.loading ? 'disabled' : ''}`}>
                           <i className={`fa fa-spinner fa-pulse ${this.state.loading ? '' : 'd-none'}`} /> Submit
+                        </Button>
+                        <Button
+                          onClick={() => history.goBack()}
+                          className={`mx-3 btn btn-danger btn-lg`}>
+                          Cancel
                         </Button>
                       </div>
                     </div>

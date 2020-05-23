@@ -248,7 +248,7 @@ export default class EventForm extends React.Component {
       snackBarVariant
     } = this.state;
 
-    const { match } = this.props;
+    const { match, history } = this.props;
     const isEdit = !!match.params.eventId; 
 
     return (
@@ -440,6 +440,11 @@ export default class EventForm extends React.Component {
                         <Button className={`btn btn-success btn-lg ${this.state.loading ? 'disabled' : ''}`}>
                           <i className={`fa fa-spinner fa-pulse ${this.state.loading ? '' : 'd-none'}`} />
                           {isEdit ? " Update" : " Submit"}
+                        </Button>
+                        <Button
+                          onClick={() => history.goBack()}
+                          className={`mx-3 btn btn-danger btn-lg`}>
+                          Cancel
                         </Button>
                       </div>
                     </div>

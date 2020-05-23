@@ -82,7 +82,8 @@ export default class PrivacyPolicyForm extends React.Component {
       description,
       showSnackBar,
       snackBarMessage,
-      snackBarVariant } = this.state; 
+      snackBarVariant } = this.state;
+      const {history} = this.props;
     return (
       <div className="row animated fadeIn">
         {showSnackBar && (
@@ -126,6 +127,11 @@ export default class PrivacyPolicyForm extends React.Component {
                         <Button className={`btn btn-success btn-lg ${this.state.loading ? 'disabled' : ''}`}>
                           <i className={`fa fa-spinner fa-pulse ${this.state.loading ? '' : 'd-none'}`} /> Update
                         </Button>
+                        {/* <Button
+                          onClick={() => history.goBack()}
+                          className={`mx-3 btn btn-danger btn-lg`}>
+                          Cancel
+                        </Button> */}
                       </div>
                     </div>
                   </form>
