@@ -146,7 +146,7 @@ export default class UserForm extends React.Component {
     if(this.state.snackBarVariant === "success") {
       history.goBack();
     }
-  }
+  } 
 
   render() {
     console.log(this.state);
