@@ -7,10 +7,10 @@ import { addUser, updateUser, getUserById } from "../backend/services/usersServi
 import {firebase} from "../backend/firebase";
 import {imageResizeFileUri} from "../static/_imageUtils";
 import { v4 as uuidv4 } from 'uuid';
+import SnackBar from "../components/SnackBar";
 
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
-
 export default class UserForm extends React.Component {
   constructor(props) {
     super(props);
@@ -32,6 +32,9 @@ export default class UserForm extends React.Component {
       image: "",
       userId: '',
       description: RichTextEditor.createEmptyValue(),
+      showSnackBar: false,
+      snackBarMessage: "",
+      snackBarVariant: "success"
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -93,9 +96,13 @@ export default class UserForm extends React.Component {
         let cloneObject = Object.assign({}, user)
         updateUser(match.params.userId, cloneObject)
           .then((response) => {
-            window.alert("User updated successfully");
-            history.goBack();
-            this.setState({ loading: false });
+            // history.goBack();
+            this.setState({
+              loading: false,
+              showSnackBar: true,
+              snackBarMessage: "User updated successfully",
+              snackBarVariant: "success",
+            });
           })
           .catch((err) => {
             window.alert('ERROR!')
@@ -105,9 +112,13 @@ export default class UserForm extends React.Component {
       else {
         addUser(user)
           .then((response) => {
-            window.alert("User saved successfully");
-            this.setState({ loading: false });
-            history.goBack();
+            this.setState({
+              loading: false,
+              showSnackBar: true,
+              snackBarMessage: "User saved successfully",
+              snackBarVariant: "success",
+            });
+            // history.goBack();
           })
           .catch((err) => {
             window.alert('ERROR!')
@@ -123,61 +134,31 @@ export default class UserForm extends React.Component {
     });
   }
 
+  closeSnackBar = () => {
+    const { history } = this.props;
+    this.setState({ showSnackBar: false })
+    history.goBack();
+  }
+
   render() {
     console.log(this.state);
     const {
       user,
+      showSnackBar,
+      snackBarMessage,
+      snackBarVariant
     } = this.state;
-    const toolbarConfig = {
-      // Optionally specify the groups to display (displayed in the order listed).
-      display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'HISTORY_BUTTONS', 'BLOCK_TYPE_DROPDOWN'],
-      INLINE_STYLE_BUTTONS: [
-        {
-          label: 'Bold',
-          style: 'BOLD',
-          className: 'custom-css-class',
-        },
-        {
-          label: 'Italic',
-          style: 'ITALIC',
-        },
-        {
-          label: 'Underline',
-          style: 'UNDERLINE',
-        },
-      ],
-      BLOCK_TYPE_DROPDOWN: [
-        {
-          label: 'Normal',
-          style: 'unstyled',
-        },
-        {
-          label: 'Large Heading',
-          style: 'header-three',
-        },
-        {
-          label: 'Medium Heading',
-          style: 'header-four',
-        },
-        {
-          label: 'Small Heading',
-          style: 'header-five',
-        },
-      ],
-      BLOCK_TYPE_BUTTONS: [
-        {
-          label: 'UL',
-          style: 'unordered-list-item',
-        },
-        {
-          label: 'OL',
-          style: 'ordered-list-item',
-        },
-      ],
-    };
-    // console.log(this.state);
+
     return (
       <div className="row animated fadeIn">
+        {showSnackBar && (
+          <SnackBar
+            open={showSnackBar}
+            message={snackBarMessage}
+            variant={snackBarVariant}
+            onClose={() => this.closeSnackBar()}
+          />
+        )}
         <div className="col-12">
           <div className="row">
             <div className="col-md-12 col-sm-12">
@@ -377,7 +358,6 @@ export default class UserForm extends React.Component {
                         />
                       </div>
                     </div> */}
-
                     <div className="ln_solid"></div>
                     <div className="form-group row">
                       <div className="col-md-6 col-sm-6 offset-md-3">
@@ -396,4 +376,3 @@ export default class UserForm extends React.Component {
     );
   }
 }
-
