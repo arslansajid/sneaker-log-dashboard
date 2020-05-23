@@ -1,15 +1,24 @@
 import firebase from 'firebase';
 
-export const signUp = async (email, password) => {
-  let success = true;
-  await firebase.auth().createUserWithEmailAndPassword(email, password)
-  .then(async (user) => {
-      alert('Sign up success')
-    }).catch((error)=> {
-      success = false;
-      alert(error.code + ': ' + error.message);
-    });
-    return success;
+// export const signUp = async (email, password) => {
+//   let success = true;
+//   await firebase.auth().createUserWithEmailAndPassword(email, password)
+//   .then(async (user) => {
+//       alert('Sign up success')
+//     }).catch((error)=> {
+//       success = false;
+//       alert(error.code + ': ' + error.message);
+//     });
+//     return success;
+// }
+
+export const signUp = async function (email, password) {
+  try {
+    const res = await firebase.auth().createUserWithEmailAndPassword(email, password);
+    return res;
+  } catch (err) {
+    throw err.message;
+  }
 }
 
 export async function signInWithEmail(email, password) {
