@@ -96,7 +96,6 @@ export default class UserForm extends React.Component {
         let cloneObject = Object.assign({}, user)
         updateUser(match.params.userId, cloneObject)
           .then((response) => {
-            // history.goBack();
             this.setState({
               loading: false,
               showSnackBar: true,
@@ -105,8 +104,12 @@ export default class UserForm extends React.Component {
             });
           })
           .catch((err) => {
-            window.alert('ERROR!')
-            this.setState({ loading: false });
+            this.setState({
+              loading: false,
+              showSnackBar: true,
+              snackBarMessage: "Error updating user",
+              snackBarVariant: "error",
+            });
           })
       }
       else {
@@ -118,11 +121,14 @@ export default class UserForm extends React.Component {
               snackBarMessage: "User saved successfully",
               snackBarVariant: "success",
             });
-            // history.goBack();
           })
           .catch((err) => {
-            window.alert('ERROR!')
-            this.setState({ loading: false });
+            this.setState({
+              loading: false,
+              showSnackBar: true,
+              snackBarMessage: "Error creating user",
+              snackBarVariant: "error",
+            });
           })
       }
     }
@@ -148,6 +154,8 @@ export default class UserForm extends React.Component {
       snackBarMessage,
       snackBarVariant
     } = this.state;
+    const { match } = this.props;
+    const isEdit = !!match.params.userId; 
 
     return (
       <div className="row animated fadeIn">
@@ -362,7 +370,8 @@ export default class UserForm extends React.Component {
                     <div className="form-group row">
                       <div className="col-md-6 col-sm-6 offset-md-3">
                         <Button className={`btn btn-success btn-lg ${this.state.loading ? 'disabled' : ''}`}>
-                          <i className={`fa fa-spinner fa-pulse ${this.state.loading ? '' : 'd-none'}`} /> Submit
+                          <i className={`fa fa-spinner fa-pulse ${this.state.loading ? '' : 'd-none'}`} />
+                          {isEdit ? " Update" : " Submit"}
                         </Button>
                       </div>
                     </div>
