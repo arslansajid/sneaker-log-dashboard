@@ -38,6 +38,10 @@ import TermsServiceForm from './TermsServiceForm';
 import Sneakers from './Sneakers';
 import SneakersForm from './SneakersForm';
 
+import * as types from '../static/_types';
+import {firebase} from "../backend/firebase"
+import {getSignedInUser} from "../backend/services/authService";
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -51,11 +55,22 @@ class App extends React.Component {
     }
   }
 
-  componentWillMount() {
+  async componentDidMount() {
     const { dispatch, history } = this.props;
     const token = Cookie.get('sneakerlog_access_token');
+
+
+    await firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in.
+        this.props.dispatch({
+          type: types.SET_USER_FROM_TOKEN,
+          payload: user
+        });
+      }
+    })
+
     if (token) {
-      axios.defaults.headers.common.Authorization = `${token}`;
       this.setState({ loading: false });
     } else {
       history.push('/login');

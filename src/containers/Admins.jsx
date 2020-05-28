@@ -3,15 +3,16 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 // import {Pagination, Modal, Button} from 'react-bootstrap';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import {getAdmins, deleteAdmin} from "../backend/services/adminService"
+import {getAdmins, deleteAdmin} from "../backend/services/adminService";
+import {sendForgotPasswordEmail} from "../backend/services/authService";
 import SnackBar from "../components/SnackBar";
 import Swal from "sweetalert2";
-
+import { connect } from "react-redux";
 import { API_END_POINT } from '../config';
 import Cookie from 'js-cookie';
 const token = Cookie.get('sneakerlog_access_token');
 
-export default class Admin extends React.Component {
+class Admin extends React.Component {
   constructor(props) {
     super(props);
 
@@ -129,12 +130,35 @@ export default class Admin extends React.Component {
     })
   }
 
+  resetPassword = (email) => {
+    sendForgotPasswordEmail(email)
+    .then(() => {
+      this.setState({
+        showSnackBar: true,
+        snackBarMessage: "Link has been sent to the email address",
+        snackBarVariant: "success",
+      });
+    })
+    .catch((err) => {
+      this.setState({
+        showSnackBar: true,
+        snackBarMessage: "Error while sending reset password email",
+        snackBarVariant: "error",
+      });
+    })
+  }
+
+  closeSnackBar = () => {
+    this.setState({ showSnackBar: false })
+  }
+
   render() {
-    // console.log(this.state);
+    console.log(this.props);
     const { loading, admins, responseMessage, showModal, inviteEmail,
       showSnackBar,
       snackBarMessage,
       snackBarVariant } = this.state; 
+      const {currentUser} = this.props;
     return (
       <Fragment>
         {showSnackBar && (
@@ -210,6 +234,16 @@ export default class Admin extends React.Component {
                         <td>
                           <span className="fa fa-trash" style={{ cursor: 'pointer' }} aria-hidden="true" onClick={() => this.deleteAdmin(admin.id, index)}></span>
                         </td> */}
+                        {!!currentUser && (currentUser.user.email === admin.email)
+                        ?
+                        <td>
+                          <button className="btn btn-warning" onClick={() => this.resetPassword(admin.email)}>
+                            Send Reset Password Email
+                          </button>
+                        </td>
+                        :
+                        <td></td>
+                        }
                       </tr>
                     )) :
                     (
@@ -248,3 +282,17 @@ export default class Admin extends React.Component {
     );
   }
 }
+
+
+const mapStateToProps = state => {
+  const user = state.user || null;
+  return {
+    // currentUserImage: user.profile_image,
+    // currentUserId: user.id,
+    // currentUserFullName: user.first_name + ' ' + user.last_name,
+    // currentUserEmail: user.email,
+    currentUser: user,
+  };
+};
+
+export default connect(mapStateToProps)(Admin);

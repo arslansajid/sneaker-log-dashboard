@@ -12,6 +12,15 @@ import firebase from 'firebase';
 //     return success;
 // }
 
+export const sendForgotPasswordEmail = async function (emailAddress) {
+  try {
+    const res = await firebase.auth().sendPasswordResetEmail(emailAddress);
+    return res;
+  } catch (err) {
+    throw err.message;
+  }
+};
+
 export const signUp = async function (email, password) {
   try {
     const res = await firebase.auth().createUserWithEmailAndPassword(email, password);
