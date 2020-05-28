@@ -6,7 +6,7 @@ import { Button } from 'reactstrap';
 import {signUp} from "../backend/services/authService";
 import {addAdmin} from "../backend/services/adminService"
 import SnackBar from "../components/SnackBar";
-
+import firebase from 'firebase';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 
@@ -52,6 +52,40 @@ export default class MemberForm extends React.Component {
     this.setState({ admin });
   }
 
+  createAdmin = (em, pwd) => {
+    const {admin} = this.state;
+    var config = {
+      apiKey: "AIzaSyBS7sW8y4EL12VVw2iFxzeWLccqmZG6BD0",
+      authDomain: "sneakerlog-c7664.firebaseapp.com",
+      databaseURL: "https://sneakerlog-c7664.firebaseio.com",
+  };
+    var secondaryApp = firebase.initializeApp(config, "Secondary");
+
+    secondaryApp.auth().createUserWithEmailAndPassword(em, pwd)
+    .then((firebaseUser) => {
+        console.log("Admin " + firebaseUser.uid + " created successfully!");
+        addAdmin(admin)
+        .then(() => { //double then beacuase adding data to admin document in firebase
+          this.setState({
+            loading: false,
+            showSnackBar: true,
+            snackBarMessage: "Admin saved successfully",
+            snackBarVariant: "success",
+          });
+        })
+        .catch((err) => {
+          this.setState({
+            loading: false,
+            showSnackBar: true,
+            snackBarMessage: err.message,
+            snackBarVariant: "error",
+          });
+        })
+        //I don't know if the next statement is necessary 
+        secondaryApp.auth().signOut();
+    });
+  }
+
   postAdmin = async (event) => {
     event.preventDefault();
     const { match, history } = this.props;
@@ -77,26 +111,15 @@ export default class MemberForm extends React.Component {
       }
       else {
       if(admin.password === admin.confirmPassword) {
-        signUp(admin.email, admin.password)
-          .then((response) => {
-            addAdmin(admin) 
-            .then(() => { //double then beacuase adding data to admin document in firebase
-              this.setState({
-                loading: false,
-                showSnackBar: true,
-                snackBarMessage: "Admin saved successfully",
-                snackBarVariant: "success",
-              });
-            })
-          })
-          .catch((err) => {
-            this.setState({
-              loading: false,
-              showSnackBar: true,
-              snackBarMessage: err,
-              snackBarVariant: "error",
-            });
-          })
+        this.createAdmin(admin.email, admin.password)
+          // .catch((err) => {
+          //   this.setState({
+          //     loading: false,
+          //     showSnackBar: true,
+          //     snackBarMessage: err,
+          //     snackBarVariant: "error",
+          //   });
+          // })
       }
       else {
         this.setState({
