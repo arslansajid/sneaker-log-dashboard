@@ -23,7 +23,7 @@ export default class UserForm extends React.Component {
         phone: '',
         collections: '',
         sneakerSize: '',
-        favoriteBrands: '',
+        exports: '',
         sneakerCount: '',
         sneakerScans: '',
         profileImage: '',
@@ -306,15 +306,15 @@ export default class UserForm extends React.Component {
                     <div className="form-group row">
                       <label
                         className="control-label col-md-3 col-sm-3"
-                      >Favourite Brands
+                      >Exports
                       </label>
                       <div className="col-md-6 col-sm-6">
                         <input
                           required
                           type="text"
-                          name="favoriteBrands"
+                          name="exports"
                           className="form-control"
-                          value={user.favoriteBrands}
+                          value={user.exports}
                           onChange={this.handleInputChange}
                         />
                       </div>

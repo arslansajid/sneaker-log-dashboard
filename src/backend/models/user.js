@@ -8,7 +8,7 @@ export class User {
         this.phone = x.phone;
         this.collections = x.collections;
         this.sneakerSize = x.sneakerSize;
-        this.favoriteBrands = x.favoriteBrands;
+        this.exports = x.exports;
         this.sneakerCount = x.sneakerCount;
         this.sneakerScans = x.sneakerScans;
         this.timestampRegister = x.timestampRegister;
@@ -28,7 +28,7 @@ export class User {
             phone: data['phone'] ? data['phone'] : '',
             collections: data['collections'] ? data['collections'] : '',
             sneakerSize: data['sneakerSize'] ? data['sneakerSize'] : '',
-            favoriteBrands: data['favoriteBrands'] ? data['favoriteBrands'] : '',
+            exports: data['exports'] ? data['exports'] : '',
             sneakerCount: data['sneakerCount'] ? data['sneakerCount'] : '',
             sneakerScans: data['sneakerScans'] ? data['sneakerScans'] : '',
             timestampRegister: data['timestampRegister'] ? data['timestampRegister'] : '',
@@ -45,7 +45,7 @@ export class User {
             phone: x.phone,
             collections: x.collections,
             sneakerSize: x.sneakerSize,
-            favoriteBrands: x.favoriteBrands,
+            exports: x.exports,
             sneakerCount: x.sneakerCount,
             sneakerScans: x.sneakerScans,
             timestampRegister: x.timestampRegister,

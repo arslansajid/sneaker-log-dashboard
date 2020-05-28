@@ -199,7 +199,7 @@ export default class Users extends React.Component {
                   <th>Phone</th>
                   <th>No. of Collections</th>
                   <th>Size</th>
-                  <th>Favorite Brands</th>
+                  <th>Exports</th>
                   <th>Sneaker Count</th>
                   <th>Sneaker Scans</th>
                 </tr>
@@ -215,7 +215,7 @@ export default class Users extends React.Component {
                       <td>{user.phone}</td>
                       <td>{user.collections}</td>
                       <td>{user.sneakerSize}</td>
-                      <td>{user.favoriteBrands}</td>
+                      <td>{user.exports}</td>
                       <td>{user.sneakerCount}</td>
                       <td>{user.sneakerScans}</td>
                       <td>
