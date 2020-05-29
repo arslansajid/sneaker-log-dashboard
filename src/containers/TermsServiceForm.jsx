@@ -10,6 +10,7 @@ export default class TermsServiceForm extends React.Component {
     super(props);
     this.state = {
       terms: [],
+      previousContent: '',
       loading: false,
       description: RichTextEditor.createEmptyValue(),
       showSnackBar: false,
@@ -25,6 +26,7 @@ export default class TermsServiceForm extends React.Component {
         this.setState({
           terms: response,
           description: RichTextEditor.createValueFromString(response[0].termsOfService, 'html'),
+          previousContent: RichTextEditor.createValueFromString(response[0].termsOfService, 'html')
         });
       });
   }
@@ -68,6 +70,13 @@ export default class TermsServiceForm extends React.Component {
 
   closeSnackBar = () => {
     this.setState({ showSnackBar: false })
+  }
+
+  revertChanges = () => {
+    const {previousContent} = this.state;
+    this.setState({
+      description: previousContent
+    })
   }
 
   render() {
@@ -120,11 +129,11 @@ export default class TermsServiceForm extends React.Component {
                         <Button className={`btn btn-success btn-lg ${this.state.loading ? 'disabled' : ''}`}>
                           <i className={`fa fa-spinner fa-pulse ${this.state.loading ? '' : 'd-none'}`} /> Update
                         </Button>
-                        {/* <Button
-                          onClick={() => history.goBack()}
+                        <Button
+                          onClick={() => this.revertChanges()}
                           className={`mx-3 btn btn-danger btn-lg`}>
                           Cancel
-                        </Button> */}
+                        </Button>
                       </div>
                     </div>
                   </form>
