@@ -133,7 +133,7 @@ class Login extends Component {
                     <div style={style.logoWrapper} className={`svg-logo`}>
                       <img className={`companyLogo`} src={`${require('sneaker.png')}`} />
                     </div>
-                      <div className={`text-center`} style={{ fontSize: '20px', paddingTop: "10px", fontWeight: "bold" }}>Sneaker Log Dashboard</div>
+                      {/* <div className={`text-center`} style={{ fontSize: '20px', paddingTop: "10px", fontWeight: "bold" }}>Sneaker Log Dashboard</div> */}
                     </div>
                   </CardBody>
                 </Card>
