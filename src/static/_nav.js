@@ -56,6 +56,16 @@ export default {
       icon: 'icon-docs',
     },
     {
+      name: 'FAQ',
+      url: '/faq',
+      icon: 'icon-list',
+    },
+    {
+      name: 'About',
+      url: '/about',
+      icon: 'icon-globe ',
+    },
+    {
       name: 'Logout',
       url: '/logout',
       icon: 'icon-logout',

@@ -37,5 +37,8 @@ const routes = {
   '/terms-service/terms-service-form': 'Terms Service Form',
   '/terms-service/edit-terms-service': 'Edit Terms Service',
 
+  '/faq': 'FAQ',
+  '/about': 'About',
+
 };
 export default routes;
